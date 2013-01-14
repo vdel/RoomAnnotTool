@@ -1,0 +1,1009 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objectslibrary version="1" roomheight="2.7">
+
+
+
+  <object name="Table" class="Table" nboxes="5">
+    <color r="255" g="0" b="255"></color>
+	<variable name="height" coefforigin="0">0.75</variable>
+  	<variable name="width" coefforigin="0.5">0.85</variable>
+  	<variable name="depth" coefforigin="0.5">1.8</variable>
+  	<variable name="footwidth" coefforigin="0">0.1</variable>  	
+  	<variable name="footborder" coefforigin="0">0.05</variable>  	  	
+  	<variable name="thickness" coefforigin="0">0.05</variable>  	
+  	
+  	<supportconstraint box="0" face="TOP">height</supportconstraint>
+  	<supportconstraint box="0" face="BACK">-depth/2</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">depth/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>
+  	  	
+  	<faceconstraint box1="0" face1="TOP" box2="0" face2="BOTTOM">-thickness</faceconstraint>
+  	
+  	<faceconstraint box1="0" face1="LEFT"   box2="1" face2="LEFT">footborder</faceconstraint>  	
+  	<faceconstraint box1="0" face1="FRONT"  box2="1" face2="FRONT">-footborder</faceconstraint>
+  	<faceconstraint box1="0" face1="BOTTOM" box2="1" face2="TOP">0</faceconstraint>  	  	  	  	
+  	<faceconstraint box1="1" face1="LEFT"   box2="1" face2="RIGHT">footwidth</faceconstraint>  	
+  	<faceconstraint box1="1" face1="FRONT"  box2="1" face2="BACK">-footwidth</faceconstraint>  	  	  	
+  	<faceconstraint box1="1" face1="TOP"    box2="1" face2="BOTTOM">thickness-height</faceconstraint>  	
+  	
+  	<faceconstraint box1="0" face1="RIGHT"  box2="2" face2="RIGHT">-footborder</faceconstraint>  	
+  	<faceconstraint box1="0" face1="FRONT"  box2="2" face2="FRONT">-footborder</faceconstraint>
+  	<faceconstraint box1="0" face1="BOTTOM" box2="2" face2="TOP">0</faceconstraint>  	  	  	  	
+  	<faceconstraint box1="2" face1="RIGHT"  box2="2" face2="LEFT">-footwidth</faceconstraint>  	
+  	<faceconstraint box1="2" face1="FRONT"  box2="2" face2="BACK">-footwidth</faceconstraint>  	  	  	
+  	<faceconstraint box1="2" face1="TOP"    box2="2" face2="BOTTOM">thickness-height</faceconstraint>  	  	  	
+
+  	<faceconstraint box1="0" face1="LEFT"   box2="3" face2="LEFT">footborder</faceconstraint>  	
+  	<faceconstraint box1="0" face1="BACK"   box2="3" face2="BACK">footborder</faceconstraint>
+  	<faceconstraint box1="0" face1="BOTTOM" box2="3" face2="TOP">0</faceconstraint>  	  	  	  	
+  	<faceconstraint box1="3" face1="LEFT"   box2="3" face2="RIGHT">footwidth</faceconstraint>  	
+  	<faceconstraint box1="3" face1="BACK"   box2="3" face2="FRONT">footwidth</faceconstraint>  	  	  	
+  	<faceconstraint box1="3" face1="TOP"    box2="3" face2="BOTTOM">thickness-height</faceconstraint>  	
+  	
+  	<faceconstraint box1="0" face1="RIGHT"  box2="4" face2="RIGHT">-footborder</faceconstraint>  	
+  	<faceconstraint box1="0" face1="BACK"   box2="4"  face2="BACK">footborder</faceconstraint>
+  	<faceconstraint box1="0" face1="BOTTOM" box2="4" face2="TOP">0</faceconstraint>  	  	  	  	
+  	<faceconstraint box1="4" face1="RIGHT"  box2="4" face2="LEFT">-footwidth</faceconstraint>  	
+  	<faceconstraint box1="4" face1="BACK"   box2="4" face2="FRONT">footwidth</faceconstraint>  	  	  	
+  	<faceconstraint box1="4" face1="TOP"    box2="4" face2="BOTTOM">thickness-height</faceconstraint>  
+  	
+  	<varconstraint>depth &lt; 4</varconstraint>
+	<varconstraint>depth &gt; width</varconstraint>
+  	<varconstraint>width &gt; 0.3</varconstraint>  	  	  	
+  	<varconstraint>height &lt; 1.2</varconstraint>  	 	
+  	<varconstraint>footborder &lt; (width-footwidth*2)/2</varconstraint>
+  	<varconstraint>thickness &gt; 0.03</varconstraint>  	  	
+  	<varconstraint>thickness &lt; 0.3</varconstraint>  	  	
+  	<varconstraint>footwidth &gt; 0.03</varconstraint>  	  	  	
+  	<varconstraint>footwidth &lt; 0.2</varconstraint>  	  	  	
+  	<supportface>BOTTOM</supportface>
+  	<symetry x="1" y="1" z="0"></symetry>  	
+  </object>  
+
+
+
+
+
+
+  <object name="Coffee Table" class="CoffeeTable" nboxes="5">
+    <color r="255" g="170" b="0"></color>
+	<variable name="height" coefforigin="0">0.5</variable>
+  	<variable name="width" coefforigin="0.5">0.6</variable>
+  	<variable name="depth" coefforigin="0.5">0.8</variable>
+  	<variable name="footwidth" coefforigin="0">0.08</variable>  	
+  	<variable name="footborder" coefforigin="0">0.0</variable>  	  	
+  	<variable name="thickness" coefforigin="0">0.05</variable>  	  	
+
+  	<supportconstraint box="0" face="TOP">height</supportconstraint>
+  	<supportconstraint box="0" face="BACK">-depth/2</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">depth/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>
+  	
+  	<faceconstraint box1="0" face1="TOP" box2="0" face2="BOTTOM">-thickness</faceconstraint>
+  	
+  	<faceconstraint box1="0" face1="LEFT"   box2="1" face2="LEFT">footborder</faceconstraint>  	
+  	<faceconstraint box1="0" face1="FRONT"  box2="1" face2="FRONT">-footborder</faceconstraint>
+  	<faceconstraint box1="0" face1="BOTTOM" box2="1" face2="TOP">0</faceconstraint>  	  	  	  	
+  	<faceconstraint box1="1" face1="LEFT"   box2="1" face2="RIGHT">footwidth</faceconstraint>  	
+  	<faceconstraint box1="1" face1="FRONT"  box2="1" face2="BACK">-footwidth</faceconstraint>  	  	  	
+  	<faceconstraint box1="1" face1="TOP"    box2="1" face2="BOTTOM">thickness-height</faceconstraint>  	
+  	
+  	<faceconstraint box1="0" face1="RIGHT"  box2="2" face2="RIGHT">-footborder</faceconstraint>  	
+  	<faceconstraint box1="0" face1="FRONT"  box2="2" face2="FRONT">-footborder</faceconstraint>
+  	<faceconstraint box1="0" face1="BOTTOM" box2="2" face2="TOP">0</faceconstraint>  	  	  	  	
+  	<faceconstraint box1="2" face1="RIGHT"  box2="2" face2="LEFT">-footwidth</faceconstraint>  	
+  	<faceconstraint box1="2" face1="FRONT"  box2="2" face2="BACK">-footwidth</faceconstraint>  	  	  	
+  	<faceconstraint box1="2" face1="TOP"    box2="2" face2="BOTTOM">thickness-height</faceconstraint>  	  	  	
+
+  	<faceconstraint box1="0" face1="LEFT"   box2="3" face2="LEFT">footborder</faceconstraint>  	
+  	<faceconstraint box1="0" face1="BACK"   box2="3" face2="BACK">footborder</faceconstraint>
+  	<faceconstraint box1="0" face1="BOTTOM" box2="3" face2="TOP">0</faceconstraint>  	  	  	  	
+  	<faceconstraint box1="3" face1="LEFT"   box2="3" face2="RIGHT">footwidth</faceconstraint>  	
+  	<faceconstraint box1="3" face1="BACK"   box2="3" face2="FRONT">footwidth</faceconstraint>  	  	  	
+  	<faceconstraint box1="3" face1="TOP"    box2="3" face2="BOTTOM">thickness-height</faceconstraint>  	
+  	
+  	<faceconstraint box1="0" face1="RIGHT"  box2="4" face2="RIGHT">-footborder</faceconstraint>  	
+  	<faceconstraint box1="0" face1="BACK"   box2="4"  face2="BACK">footborder</faceconstraint>
+  	<faceconstraint box1="0" face1="BOTTOM" box2="4" face2="TOP">0</faceconstraint>  	  	  	  	
+  	<faceconstraint box1="4" face1="RIGHT"  box2="4" face2="LEFT">-footwidth</faceconstraint>  	
+  	<faceconstraint box1="4" face1="BACK"   box2="4" face2="FRONT">footwidth</faceconstraint>  	  	  	
+  	<faceconstraint box1="4" face1="TOP"    box2="4" face2="BOTTOM">thickness-height</faceconstraint>  
+
+  	<varconstraint>depth &lt; 2</varconstraint>
+  	<varconstraint>depth &gt; width</varconstraint>
+  	<varconstraint>width &gt; 0.2</varconstraint>  	
+  	<varconstraint>height &lt; 1.2</varconstraint>  	 	
+  	<varconstraint>footborder &lt; (width-footwidth*2)/2</varconstraint>
+  	<varconstraint>thickness &gt; 0.01</varconstraint>  	  	
+  	<varconstraint>thickness &lt; height</varconstraint>  	  	
+  	<varconstraint>footwidth &gt; 0.01</varconstraint>  	  	  	
+  	<varconstraint>footwidth &lt; 0.2</varconstraint>  	  	  	
+  	<supportface>BOTTOM</supportface>
+  	<symetry x="1" y="1" z="0"></symetry>  	
+  </object>  
+
+
+
+  
+  
+  
+
+  <object name="Footrest" class="CoffeeTable" nboxes="1">
+    <color r="255" g="170" b="0"></color>
+	<variable name="height" coefforigin="0.5">0.4</variable>
+  	<variable name="width" coefforigin="0.5">0.5</variable>
+  	<variable name="depth" coefforigin="0.5">0.5</variable>
+
+  	<supportconstraint box="0" face="TOP">height/2</supportconstraint>
+  	<supportconstraint box="0" face="BOTTOM">-height/2</supportconstraint>
+  	<supportconstraint box="0" face="BACK">-depth/2</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">depth/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>
+  	
+  	<varconstraint>depth &lt; 3</varconstraint>
+  	<varconstraint>depth &gt; width</varconstraint>
+  	<varconstraint>width &gt; 0.1</varconstraint>  	
+  	<varconstraint>height &lt; 1</varconstraint>  	 	
+  	<supportface>BOTTOM</supportface>
+  	<symetry x="1" y="1" z="0"></symetry>  	
+  </object>  
+
+
+
+
+  
+  
+  <object name="Sofa" class="SofaArmchair" nboxes="4">
+    <color r="255" g="0" b="0"></color>
+	<variable name="height" coefforigin="0">0.3</variable>
+  	<variable name="width" coefforigin="0.5">2</variable>
+  	<variable name="depth" coefforigin="0.5">0.9</variable>  	  	  	  	  	
+  	<variable name="backheight" coefforigin="0">0.5</variable>
+  	<variable name="backdepth" coefforigin="0">0.3</variable> 
+  	<variable name="armwidth"  coefforigin="0">0.2</variable>  	  	
+  	<variable name="armheight"  coefforigin="0">0.1</variable>  	 		  	  	
+  	<variable name="armdepth"  coefforigin="0">0.5</variable>    	
+  	
+  	<supportconstraint box="0" face="BOTTOM">0</supportconstraint>
+  	<supportconstraint box="0" face="TOP">height</supportconstraint>
+  	<supportconstraint box="0" face="BACK">-depth/2</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">depth/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>  	
+  	
+	<faceconstraint box1="0" face1="BACK"   box2="1" face2="BACK">0</faceconstraint>  	
+  	<faceconstraint box1="0" face1="LEFT"   box2="1" face2="LEFT">0</faceconstraint>
+  	<faceconstraint box1="0" face1="RIGHT"  box2="1" face2="RIGHT">0</faceconstraint>  	  	  	  	
+  	<faceconstraint box1="0" face1="TOP"    box2="1" face2="BOTTOM">0</faceconstraint>  	
+  	<faceconstraint box1="1" face1="BOTTOM" box2="1" face2="TOP">backheight</faceconstraint>  	  	  	
+  	<faceconstraint box1="1" face1="BACK"   box2="1" face2="FRONT">backdepth</faceconstraint>  
+  	
+	<faceconstraint box1="1" face1="FRONT"  box2="2" face2="BACK">0</faceconstraint>  	
+  	<faceconstraint box1="0" face1="LEFT"   box2="2" face2="LEFT">0</faceconstraint>
+  	<faceconstraint box1="0" face1="TOP"    box2="2" face2="BOTTOM">0</faceconstraint>  	
+  	<faceconstraint box1="3" face1="BACK"   box2="2" face2="FRONT">armdepth</faceconstraint>  	  	
+  	<faceconstraint box1="2" face1="LEFT"   box2="2" face2="RIGHT">armwidth</faceconstraint>  	  	  	
+  	<faceconstraint box1="2" face1="BOTTOM" box2="2" face2="TOP">armheight</faceconstraint>  
+  	
+	<faceconstraint box1="1" face1="FRONT"  box2="3" face2="BACK">0</faceconstraint>  	
+  	<faceconstraint box1="0" face1="RIGHT"  box2="3" face2="RIGHT">0</faceconstraint>  	  	  
+  	<faceconstraint box1="0" face1="TOP"    box2="3" face2="BOTTOM">0</faceconstraint>  	
+  	<faceconstraint box1="3" face1="BACK"   box2="3" face2="FRONT">armdepth</faceconstraint>  	  	
+  	<faceconstraint box1="3" face1="RIGHT"  box2="3" face2="LEFT">-armwidth</faceconstraint>  	  	  	
+  	<faceconstraint box1="3" face1="BOTTOM" box2="3" face2="TOP">armheight</faceconstraint>  
+
+  	<varconstraint>width &lt; 3.5</varconstraint>  	
+  	<varconstraint>depth &lt; 2.5</varconstraint>
+  	<varconstraint>height &lt; 0.6</varconstraint>
+  	<varconstraint>backheight &lt; 1.5</varconstraint>  	
+  	<varconstraint>backdepth &lt; depth/2</varconstraint>  	  	
+  	<varconstraint>armwidth &lt; 0.8</varconstraint>  
+  	<varconstraint>armwidth &gt; 0.03</varconstraint>  
+  	<varconstraint>armheight &lt; backheight</varconstraint>  
+  	<varconstraint>armdepth &lt; depth - backdepth</varconstraint>   	  	
+  	  	
+  	<supportface>BOTTOM</supportface>  	
+  </object>
+  
+  
+  
+  
+  
+  <object name="Armchair" class="SofaArmchair" nboxes="4">
+    <color r="255" g="0" b="0"></color>
+	<variable name="height" coefforigin="0">0.3</variable>
+  	<variable name="width" coefforigin="0.5">0.9</variable>
+  	<variable name="depth" coefforigin="0.5">0.9</variable>  	  	  	  	  	
+  	<variable name="backheight" coefforigin="0">0.5</variable>
+  	<variable name="backdepth" coefforigin="0">0.2</variable> 
+  	<variable name="armwidth"  coefforigin="0">0.1</variable>  	  	
+  	<variable name="armheight"  coefforigin="0">0.15</variable>  	 		  	  	
+  	<variable name="armdepth"  coefforigin="0">0.6</variable>    	
+  	
+  	<supportconstraint box="0" face="BOTTOM">0</supportconstraint>
+  	<supportconstraint box="0" face="TOP">height</supportconstraint>
+  	<supportconstraint box="0" face="BACK">-depth/2</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">depth/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>  	
+  	
+	<faceconstraint box1="0" face1="BACK"   box2="1" face2="BACK">0</faceconstraint>  	
+  	<faceconstraint box1="0" face1="LEFT"   box2="1" face2="LEFT">0</faceconstraint>
+  	<faceconstraint box1="0" face1="RIGHT"  box2="1" face2="RIGHT">0</faceconstraint>  	  	  	  	
+  	<faceconstraint box1="0" face1="TOP"    box2="1" face2="BOTTOM">0</faceconstraint>  	
+  	<faceconstraint box1="1" face1="BOTTOM" box2="1" face2="TOP">backheight</faceconstraint>  	  	  	
+  	<faceconstraint box1="1" face1="BACK"   box2="1" face2="FRONT">backdepth</faceconstraint>  
+  	
+	<faceconstraint box1="1" face1="FRONT"  box2="2" face2="BACK">0</faceconstraint>  	
+  	<faceconstraint box1="0" face1="LEFT"   box2="2" face2="LEFT">0</faceconstraint>
+  	<faceconstraint box1="0" face1="TOP"    box2="2" face2="BOTTOM">0</faceconstraint>  	
+  	<faceconstraint box1="3" face1="BACK"   box2="2" face2="FRONT">armdepth</faceconstraint>  	  	
+  	<faceconstraint box1="2" face1="LEFT"   box2="2" face2="RIGHT">armwidth</faceconstraint>  	  	  	
+  	<faceconstraint box1="2" face1="BOTTOM" box2="2" face2="TOP">armheight</faceconstraint>  
+  	
+	<faceconstraint box1="1" face1="FRONT"  box2="3" face2="BACK">0</faceconstraint>  	
+  	<faceconstraint box1="0" face1="RIGHT"  box2="3" face2="RIGHT">0</faceconstraint>  	  	  
+  	<faceconstraint box1="0" face1="TOP"    box2="3" face2="BOTTOM">0</faceconstraint>  	
+  	<faceconstraint box1="3" face1="BACK"   box2="3" face2="FRONT">armdepth</faceconstraint>  	  	
+  	<faceconstraint box1="3" face1="RIGHT"  box2="3" face2="LEFT">-armwidth</faceconstraint>  	  	  	
+  	<faceconstraint box1="3" face1="BOTTOM" box2="3" face2="TOP">armheight</faceconstraint>  
+
+  	<varconstraint>width &lt; 1.5</varconstraint>  	
+  	<varconstraint>depth &lt; 1.5</varconstraint>  	  	
+  	<varconstraint>height &lt; 0.6</varconstraint>
+  	<varconstraint>backheight &lt; 1.5</varconstraint>  	
+  	<varconstraint>backdepth &lt; depth/2</varconstraint>  	  	
+  	<varconstraint>armwidth &lt; 0.4</varconstraint>  
+  	<varconstraint>armwidth &gt; 0.03</varconstraint>  
+  	<varconstraint>armheight &lt; backheight</varconstraint>  
+  	<varconstraint>armheight &gt; 0.03</varconstraint>    	
+  	<varconstraint>armdepth &gt; 0.03</varconstraint>   	
+  	<varconstraint>armdepth &lt; depth - backdepth</varconstraint>   	  	
+  	  	
+  	<supportface>BOTTOM</supportface>  	
+  </object>  	
+  	
+  	
+  	
+  	
+  <object name="Bed" class="Bed" nboxes="3">
+    <color r="255" g="255" b="0"></color>
+	<variable name="height" coefforigin="0">0.5</variable>
+  	<variable name="width" coefforigin="0.5">1.6</variable>
+  	<variable name="depth" coefforigin="0.5">2</variable>  	  	  	  	  	
+  	<variable name="backheight" coefforigin="0">0.7</variable>
+  	<variable name="frontheight" coefforigin="0">0.7</variable>
+  	<variable name="thickness"  coefforigin="0">0.05</variable>  	 		  	  	
+  	
+  	<supportconstraint box="0" face="BOTTOM">0</supportconstraint>
+  	<supportconstraint box="0" face="TOP">height</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>
+  	
+  	<supportconstraint box="1" face="BACK">-depth/2</supportconstraint>
+  	<supportconstraint box="1" face="BOTTOM">0</supportconstraint>  	
+  	
+  	<supportconstraint box="2" face="FRONT">depth/2</supportconstraint>  	  	  	
+  	<supportconstraint box="2" face="BOTTOM">0</supportconstraint>  	  	  	  	
+
+	<faceconstraint box1="0" face1="LEFT"   box2="1" face2="LEFT">0</faceconstraint>  	
+  	<faceconstraint box1="0" face1="RIGHT"  box2="1" face2="RIGHT">0</faceconstraint> 	
+	<faceconstraint box1="0" face1="LEFT"   box2="2" face2="LEFT">0</faceconstraint>  	
+  	<faceconstraint box1="0" face1="RIGHT"  box2="2" face2="RIGHT">0</faceconstraint>
+
+  	<faceconstraint box1="1" face1="BACK"   box2="1" face2="FRONT">thickness</faceconstraint>  	
+  	<faceconstraint box1="1" face1="FRONT"  box2="0" face2="BACK">0</faceconstraint>
+  	<faceconstraint box1="1" face1="BOTTOM" box2="1" face2="TOP">backheight</faceconstraint>  	
+
+  	<faceconstraint box1="2" face1="FRONT"  box2="2" face2="BACK">-thickness</faceconstraint>  	  	
+  	<faceconstraint box1="2" face1="BACK"   box2="0" face2="FRONT">0</faceconstraint>  	  
+  	<faceconstraint box1="2" face1="BOTTOM" box2="2" face2="TOP">frontheight</faceconstraint>  	
+  	
+  	<varconstraint>depth &lt; 3.5</varconstraint>  	  	
+  	<varconstraint>width &lt; depth</varconstraint>  	
+  	<varconstraint>width &gt; 0.5</varconstraint>  	
+  	<varconstraint>height &lt; 1.5</varconstraint>
+  	<varconstraint>height &gt; 0.1</varconstraint>  	
+  	<varconstraint>backheight &gt; height</varconstraint>  	
+  	<varconstraint>backheight &lt; 3</varconstraint>  	  	
+  	<varconstraint>frontheight &gt; height</varconstraint>  	
+  	<varconstraint>frontheight &lt; 3</varconstraint>  	  	
+  	<varconstraint>thickness &lt; 0.2</varconstraint>  	  	
+  	<varconstraint>thickness &gt; 0.03</varconstraint>  	  	  	
+  	
+  	<supportface>BOTTOM</supportface>    	 
+  	
+  	<texture box="0" face="TOP">bed_top.jpg</texture> 	
+  </object>
+  
+  
+  
+  
+  
+  
+  
+  <object name="Christmas Tree" class="ChristmasTree" nboxes="4">
+    <color r="0" g="255" b="0"></color>
+	<variable name="trunkwidth" coefforigin="0">0.1</variable>    
+	<variable name="trunkheight" coefforigin="0">0.3</variable>    	
+	<variable name="height" coefforigin="0">2</variable>
+  	<variable name="width" coefforigin="0.5">0.8</variable>
+  	
+  	<supportconstraint box="0" face="BOTTOM">0</supportconstraint>
+  	<supportconstraint box="0" face="BACK">-trunkwidth/2</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-trunkwidth/2</supportconstraint>  	
+  	<supportconstraint box="0" face="FRONT">trunkwidth/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">trunkwidth/2</supportconstraint>  	
+
+  	<supportconstraint box="1" face="BACK">-width/2</supportconstraint>
+  	<supportconstraint box="1" face="LEFT">-width/2</supportconstraint>  	
+  	<supportconstraint box="1" face="FRONT">width/2</supportconstraint>
+  	<supportconstraint box="1" face="RIGHT">width/2</supportconstraint>  	
+
+  	<supportconstraint box="2" face="BACK">-width*2/6</supportconstraint>
+  	<supportconstraint box="2" face="LEFT">-width*2/6</supportconstraint>  	
+  	<supportconstraint box="2" face="FRONT">width*2/6</supportconstraint>
+  	<supportconstraint box="2" face="RIGHT">width*2/6</supportconstraint>  	
+
+  	<supportconstraint box="3" face="BACK">-width/6</supportconstraint>
+  	<supportconstraint box="3" face="LEFT">-width/6</supportconstraint>  	
+  	<supportconstraint box="3" face="FRONT">width/6</supportconstraint>
+  	<supportconstraint box="3" face="RIGHT">width/6</supportconstraint>  	
+  	
+  	<faceconstraint box1="0" face1="BOTTOM" box2="0" face2="TOP">trunkheight</faceconstraint>
+  	
+  	<faceconstraint box1="0" face1="TOP" box2="1" face2="BOTTOM">0</faceconstraint>
+  	<faceconstraint box1="1" face1="BOTTOM" box2="1" face2="TOP">height/3</faceconstraint>
+   	
+   	<faceconstraint box1="1" face1="TOP" box2="2" face2="BOTTOM">0</faceconstraint>
+  	<faceconstraint box1="2" face1="BOTTOM" box2="2" face2="TOP">height/3</faceconstraint>
+   	
+   	<faceconstraint box1="2" face1="TOP" box2="3" face2="BOTTOM">0</faceconstraint>
+  	<faceconstraint box1="3" face1="BOTTOM" box2="3" face2="TOP">height/3</faceconstraint>
+  	 	 	
+  	<varconstraint>width &gt; 0.3</varconstraint>  	
+  	<varconstraint>width &lt; 1.5</varconstraint>  	  	
+  	<varconstraint>height &gt; 0.3</varconstraint>  	
+  	<varconstraint>height &lt; 2.7</varconstraint>  	  	  	
+  	<varconstraint>trunkwidth &gt; 0.03</varconstraint>   	
+  	<varconstraint>trunkheight &lt; 0.5</varconstraint>   	  	
+  	
+  	<supportface>BOTTOM</supportface>
+  </object>  
+  
+  
+  
+  
+  
+  
+  
+  
+   <object name="Chair" class="Chair" nboxes="6">
+    <color r="0" g="0" b="255"></color>
+	<variable name="height" coefforigin="0">0.5</variable>
+  	<variable name="width" coefforigin="0.5">0.6</variable>
+  	<variable name="footwidth" coefforigin="0">0.08</variable>  	
+  	<variable name="footborder" coefforigin="0">0.0</variable>  	  	
+  	<variable name="sitthickness" coefforigin="0">0.05</variable>  	  	
+  	<variable name="backheight" coefforigin="0">0.7</variable>  	  	
+  	<variable name="backthickness" coefforigin="0">0.05</variable>  	  	
+
+  	<supportconstraint box="0" face="TOP">height</supportconstraint>
+  	<supportconstraint box="0" face="BACK">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">width/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>
+  	
+  	<faceconstraint box1="0" face1="TOP" box2="0" face2="BOTTOM">-sitthickness</faceconstraint>
+  	
+  	<faceconstraint box1="0" face1="LEFT"   box2="1" face2="LEFT">footborder</faceconstraint>  	
+  	<faceconstraint box1="0" face1="FRONT"  box2="1" face2="FRONT">-footborder</faceconstraint>
+  	<faceconstraint box1="0" face1="BOTTOM" box2="1" face2="TOP">0</faceconstraint>  	  	  	  	
+  	<faceconstraint box1="1" face1="LEFT"   box2="1" face2="RIGHT">footwidth</faceconstraint>  	
+  	<faceconstraint box1="1" face1="FRONT"  box2="1" face2="BACK">-footwidth</faceconstraint>  	  	  	
+  	<faceconstraint box1="1" face1="TOP"    box2="1" face2="BOTTOM">sitthickness-height</faceconstraint>  	
+  	
+  	<faceconstraint box1="0" face1="RIGHT"  box2="2" face2="RIGHT">-footborder</faceconstraint>  	
+  	<faceconstraint box1="0" face1="FRONT"  box2="2" face2="FRONT">-footborder</faceconstraint>
+  	<faceconstraint box1="0" face1="BOTTOM" box2="2" face2="TOP">0</faceconstraint>  	  	  	  	
+  	<faceconstraint box1="2" face1="RIGHT"  box2="2" face2="LEFT">-footwidth</faceconstraint>  	
+  	<faceconstraint box1="2" face1="FRONT"  box2="2" face2="BACK">-footwidth</faceconstraint>  	  	  	
+  	<faceconstraint box1="2" face1="TOP"    box2="2" face2="BOTTOM">sitthickness-height</faceconstraint>  	  	  	
+
+  	<faceconstraint box1="0" face1="LEFT"   box2="3" face2="LEFT">footborder</faceconstraint>  	
+  	<faceconstraint box1="0" face1="BACK"   box2="3" face2="BACK">footborder</faceconstraint>
+  	<faceconstraint box1="0" face1="BOTTOM" box2="3" face2="TOP">0</faceconstraint>  	  	  	  	
+  	<faceconstraint box1="3" face1="LEFT"   box2="3" face2="RIGHT">footwidth</faceconstraint>  	
+  	<faceconstraint box1="3" face1="BACK"   box2="3" face2="FRONT">footwidth</faceconstraint>  	  	  	
+  	<faceconstraint box1="3" face1="TOP"    box2="3" face2="BOTTOM">sitthickness-height</faceconstraint>  	
+  	
+  	<faceconstraint box1="0" face1="RIGHT"  box2="4" face2="RIGHT">-footborder</faceconstraint>  	
+  	<faceconstraint box1="0" face1="BACK"   box2="4"  face2="BACK">footborder</faceconstraint>
+  	<faceconstraint box1="0" face1="BOTTOM" box2="4" face2="TOP">0</faceconstraint>  	  	  	  	
+  	<faceconstraint box1="4" face1="RIGHT"  box2="4" face2="LEFT">-footwidth</faceconstraint>  	
+  	<faceconstraint box1="4" face1="BACK"   box2="4" face2="FRONT">footwidth</faceconstraint>  	  	  	
+  	<faceconstraint box1="4" face1="TOP"    box2="4" face2="BOTTOM">sitthickness-height</faceconstraint>  
+  	
+	<faceconstraint box1="0" face1="LEFT"   box2="5" face2="LEFT">0</faceconstraint>  	
+  	<faceconstraint box1="0" face1="RIGHT"  box2="5" face2="RIGHT">0</faceconstraint>
+  	<faceconstraint box1="0" face1="TOP"    box2="5" face2="BOTTOM">0</faceconstraint>  	  	  	  	
+  	<faceconstraint box1="0" face1="BACK"   box2="5" face2="BACK">0</faceconstraint>  	
+  	<faceconstraint box1="5" face1="BACK"   box2="5" face2="FRONT">backthickness</faceconstraint>  	  	  	
+  	<faceconstraint box1="5" face1="BOTTOM" box2="5" face2="TOP">backheight</faceconstraint>  	  	
+
+  	<varconstraint>width &lt; 1</varconstraint>
+  	<varconstraint>width &gt; 0.3</varconstraint>  	
+  	<varconstraint>height &lt; 1.5</varconstraint>  	 	
+  	<varconstraint>footborder &lt; (width-footwidth*2)/2</varconstraint>
+  	<varconstraint>sitthickness &gt; 0.03</varconstraint>  	  	
+  	<varconstraint>sitthickness &lt; width/2</varconstraint>  	  	
+  	<varconstraint>footwidth &gt; 0.02</varconstraint>  	  	  	
+  	<varconstraint>footwidth &lt; 0.1</varconstraint>  	  	  	
+  	<varconstraint>backthickness &gt; 0.03</varconstraint>  	  	
+  	<varconstraint>backthickness &lt; 0.3</varconstraint>
+  	<varconstraint>backheight &lt; 1.5</varconstraint>  	  	
+  	<supportface>BOTTOM</supportface>
+  	<symetry x="1" y="1" z="0"></symetry>  	
+  </object>  
+  
+  
+  
+  
+  
+  	
+  	
+  <object name="Cupboard" class="Cupboard" nboxes="1">
+    <color r="0" g="255" b="255"></color>
+	<variable name="height" coefforigin="0.5">0.8</variable>
+  	<variable name="width" coefforigin="0.5">0.8</variable>
+  	<variable name="depth" coefforigin="0.5">0.5</variable>  	  	  	  	  	
+  	
+  	<supportconstraint box="0" face="BOTTOM">-height/2</supportconstraint>
+  	<supportconstraint box="0" face="TOP">height/2</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>
+   	<supportconstraint box="0" face="BACK">-depth/2</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">depth/2</supportconstraint>
+  	
+  	<varconstraint>depth &lt; 2</varconstraint>  	  	
+  	<varconstraint>width &lt; 5</varconstraint>  	  	
+  	<varconstraint>height &lt; 3</varconstraint>  	 
+  	<varconstraint>depth &gt; 0.1</varconstraint>  	  	
+  	<varconstraint>width &gt; 0.1</varconstraint>  	  	
+  	<varconstraint>height &gt; 0.1</varconstraint>  	  	 	
+  	
+  	<supportface>BOTTOM</supportface>    	  	
+  	<supportface>BACK</supportface>    	  	  
+  	
+  	<texture box="0" face="FRONT">cupboard_front.jpg</texture> 	
+  </object>
+  
+  
+  
+  
+  <object name="Fireplace" class="OtherObject" nboxes="1">
+    <color r="255" g="140" b="0"></color>
+	<variable name="height" coefforigin="0.5">0.8</variable>
+  	<variable name="width" coefforigin="0.5">0.8</variable>
+  	<variable name="depth" coefforigin="0.5">0.3</variable>  	  	  	  	  	
+  	
+  	<supportconstraint box="0" face="BOTTOM">-height/2</supportconstraint>
+  	<supportconstraint box="0" face="TOP">height/2</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>
+   	<supportconstraint box="0" face="BACK">-depth/2</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">depth/2</supportconstraint>
+  	
+  	<varconstraint>depth &lt; 1.5</varconstraint>  	  	
+  	<varconstraint>width &lt; 3</varconstraint>  	  	
+  	<varconstraint>height &lt; 3</varconstraint>  	  	
+  	<varconstraint>depth &gt; 0.1</varconstraint>  	  	
+  	<varconstraint>width &gt; 0.1</varconstraint>  	  	
+  	<varconstraint>height &gt; 0.1</varconstraint>  	  	 	
+  	
+  	<supportface>BOTTOM</supportface>    	
+  	
+  	<texture box="0" face="FRONT">fireplace_front.jpg</texture> 	  	
+  </object>
+  
+  
+  <object name="TV" class="OtherObject" nboxes="1">
+    <color r="70" g="130" b="150"></color>
+	<variable name="height" coefforigin="0.5">0.8</variable>
+  	<variable name="width" coefforigin="0.5">1</variable>
+  	<variable name="depth" coefforigin="0.5">0.1</variable>  	  	  	  	  	
+  	
+  	<supportconstraint box="0" face="BOTTOM">-height/2</supportconstraint>
+  	<supportconstraint box="0" face="TOP">height/2</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>
+   	<supportconstraint box="0" face="BACK">-depth/2</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">depth/2</supportconstraint>
+  	
+  	<varconstraint>depth &lt; 1.5</varconstraint>  	  	
+  	<varconstraint>width &lt; 3</varconstraint>  	  	
+  	<varconstraint>height &lt; 3</varconstraint>  	  	
+  	<varconstraint>depth &gt; 0.03</varconstraint>  	  	
+  	<varconstraint>width &gt; 0.1</varconstraint>  	  	
+  	<varconstraint>height &gt; 0.1</varconstraint>  	  	 	
+  	
+  	<supportface>BOTTOM</supportface>    	  	
+  	<supportface>BACK</supportface>    	 
+  	
+  	<texture box="0" face="FRONT">tv_front.jpg</texture> 	  	 	  	
+  </object>
+  
+  
+  
+    
+  <object name="Painting" class="OtherObject" nboxes="1">
+    <color r="180" g="60" b="240"></color>
+	<variable name="height" coefforigin="0.5">0.3</variable>
+  	<variable name="width" coefforigin="0.5">0.5</variable>
+  	
+  	<supportconstraint box="0" face="BOTTOM">-height/2</supportconstraint>
+  	<supportconstraint box="0" face="TOP">height/2</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>
+   	<supportconstraint box="0" face="BACK">0</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">0.05</supportconstraint>
+  	
+  	<varconstraint>width &lt; 3</varconstraint>  	  	
+  	<varconstraint>height &lt; 3</varconstraint>  	  	  	
+  	<varconstraint>width &gt; 0.1</varconstraint>  	  	
+  	<varconstraint>height &gt; 0.1</varconstraint>  	  	 	
+  	  	
+  	<supportface>BACK</supportface> 
+  	
+  	<texture box="0" face="FRONT">painting_front.jpg</texture> 	  	 	  	
+  </object>  	
+  	
+  	  
+  <object name="Lamp" class="OtherObject" nboxes="2">
+    <color r="255" g="240" b="180"></color>
+	<variable name="height" coefforigin="0">0.5</variable>
+  	<variable name="width" coefforigin="0.5">0.05</variable> 		 
+  	<variable name="headheight" coefforigin="0">0.2</variable>   	  	  	  	
+  	<variable name="headwidth" coefforigin="0">0.2</variable>   	  	  	  	  	
+  	
+  	<supportconstraint box="0" face="BOTTOM">0</supportconstraint>
+  	<supportconstraint box="0" face="TOP">height</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>
+   	<supportconstraint box="0" face="BACK">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">width/2</supportconstraint>
+  	
+  	<supportconstraint box="1" face="BOTTOM">height</supportconstraint>
+  	<supportconstraint box="1" face="LEFT">-headwidth/2</supportconstraint>
+  	<supportconstraint box="1" face="RIGHT">headwidth/2</supportconstraint>
+   	<supportconstraint box="1" face="BACK">-headwidth/2</supportconstraint>
+  	<supportconstraint box="1" face="FRONT">headwidth/2</supportconstraint>  	
+  	<faceconstraint box1="1" face1="BOTTOM" box2="1" face2="TOP">headheight</faceconstraint>
+  	  	
+  	<varconstraint>width &lt; 3</varconstraint>  	  	
+  	<varconstraint>height &lt; 3</varconstraint> 
+  	<varconstraint>headwidth &lt; 0.7</varconstraint>  	  	
+  	<varconstraint>headheight &lt; 1</varconstraint>  	  	  	
+  	<varconstraint>width &gt; 0.02</varconstraint>  	  	
+  	<varconstraint>height &gt; 0.05</varconstraint>  
+  	<varconstraint>headwidth &gt; width</varconstraint>  		  	 	
+  	
+  	<supportface>BOTTOM</supportface>    	  	
+  	<supportface>BACK</supportface>    	  	  	 	  	  	   	  	  	
+  </object>
+  
+  
+  
+    	  
+  <object name="Suspended Lamp" class="OtherObject" nboxes="2">
+    <color r="255" g="240" b="180"></color>
+	<variable name="height" coefforigin="0">0.5</variable>
+  	<variable name="width" coefforigin="0.5">0.05</variable> 		 
+  	<variable name="headheight" coefforigin="0">0.2</variable>   	  	  	  	
+  	<variable name="headwidth" coefforigin="0">0.2</variable>   	  	  	  	  	
+  	
+  	<supportconstraint box="0" face="TOP">0</supportconstraint>
+  	<supportconstraint box="0" face="BOTTOM">-height</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>
+   	<supportconstraint box="0" face="BACK">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">width/2</supportconstraint>
+  	
+  	<supportconstraint box="1" face="TOP">-height</supportconstraint>
+  	<supportconstraint box="1" face="LEFT">-headwidth/2</supportconstraint>
+  	<supportconstraint box="1" face="RIGHT">headwidth/2</supportconstraint>
+   	<supportconstraint box="1" face="BACK">-headwidth/2</supportconstraint>
+  	<supportconstraint box="1" face="FRONT">headwidth/2</supportconstraint>  	
+  	<faceconstraint box1="1" face1="TOP" box2="1" face2="BOTTOM">-headheight</faceconstraint>
+  	  	
+  	<varconstraint>width &lt; 3</varconstraint>  	  	
+  	<varconstraint>height &lt; 3</varconstraint> 
+  	<varconstraint>headwidth &lt; 0.7</varconstraint>  	  	
+  	<varconstraint>headheight &lt; 1</varconstraint>  	  	  	
+  	<varconstraint>width &gt; 0.02</varconstraint>  	  	
+  	<varconstraint>height &gt; 0.05</varconstraint>  
+  	<varconstraint>headwidth &gt; width</varconstraint>  		  	 	
+  	 
+  	<supportface>TOP</supportface>    	  	  	 	  	  	   	  	  	
+  </object>
+  
+  
+  
+  
+  
+  <object name="Window" class="OtherObject" nboxes="1">
+    <color r="145" g="168" b="255"></color>
+	<variable name="height" coefforigin="0.5">1.5</variable>
+  	<variable name="width" coefforigin="0.5">1</variable>
+  	
+  	<supportconstraint box="0" face="BOTTOM">-height/2</supportconstraint>
+  	<supportconstraint box="0" face="TOP">height/2</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>
+   	<supportconstraint box="0" face="BACK">0</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">0.05</supportconstraint>
+  	
+  	<varconstraint>width &lt; 5</varconstraint>  	  	
+  	<varconstraint>height &lt; 3</varconstraint>  	  	
+  	<varconstraint>width &gt; 0.1</varconstraint>  	  	
+  	<varconstraint>height &gt; 0.1</varconstraint>  	  	 	
+  	    	  	
+  	<supportface>BACK</supportface>    	  
+  	
+  	<texture box="0" face="FRONT">window_front.jpg</texture> 	  	 	  		  	
+  </object>
+  
+  
+  
+  
+  <object name="Door" class="OtherObject" nboxes="1">
+    <color r="180" g="64" b="0"></color>
+	<variable name="height" coefforigin="0.5">2</variable>
+  	<variable name="width" coefforigin="0.5">0.9</variable>
+  	
+  	<supportconstraint box="0" face="BOTTOM">-height/2</supportconstraint>
+  	<supportconstraint box="0" face="TOP">height/2</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>
+   	<supportconstraint box="0" face="BACK">0</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">0.05</supportconstraint>
+  	
+  	<varconstraint>width &lt; 3</varconstraint>  	  	
+  	<varconstraint>height &lt; 3</varconstraint>  	  	
+  	<varconstraint>width &gt; 0.1</varconstraint>  	  	
+  	<varconstraint>height &gt; 0.1</varconstraint>  	  	 	
+  	    	  	
+  	<supportface>BACK</supportface>    	  	  	
+  	<supportface>BOTTOM</supportface>  
+  	
+  	<texture box="0" face="FRONT">door_front.jpg</texture> 	  	 	  	  	
+  </object>
+  
+  
+  
+   <object name="Fridge" class="Cupboard" nboxes="1">
+    <color r="180" g="60" b="230"></color>
+	<variable name="height" coefforigin="0.5">1.5</variable>
+  	<variable name="width" coefforigin="0.5">1</variable>
+  	<variable name="depth" coefforigin="0.5">0.9</variable>  	  	  	  	  	
+  	
+  	<supportconstraint box="0" face="BOTTOM">-height/2</supportconstraint>
+  	<supportconstraint box="0" face="TOP">height/2</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>
+   	<supportconstraint box="0" face="BACK">-depth/2</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">depth/2</supportconstraint>
+  	
+  	<varconstraint>depth &lt; 2</varconstraint>  	  	
+  	<varconstraint>width &lt; 2</varconstraint>  	  	
+  	<varconstraint>height &lt; 2.5</varconstraint>  	  	
+  	<varconstraint>depth &gt; 0.5</varconstraint>  	  	
+  	<varconstraint>width &gt; 0.4</varconstraint>  	  	
+  	<varconstraint>height &gt; 0.5</varconstraint>  	  	 	
+  	
+  	<supportface>BOTTOM</supportface> 
+  	
+  	<texture box="0" face="FRONT">fridge_front.jpg</texture>    	  	
+  </object>
+  
+  
+  
+  
+  
+  <object name="Hoven" class="Cupboard" nboxes="1">
+    <color r="230" g="60" b="140"></color>
+	<variable name="height" coefforigin="0.5">1</variable>
+  	<variable name="width" coefforigin="0.5">1</variable>
+  	<variable name="depth" coefforigin="0.5">1</variable>  	  	  	  	  	
+  	
+  	<supportconstraint box="0" face="BOTTOM">-height/2</supportconstraint>
+  	<supportconstraint box="0" face="TOP">height/2</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>
+   	<supportconstraint box="0" face="BACK">-depth/2</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">depth/2</supportconstraint>
+  	
+  	<varconstraint>depth &lt; 2</varconstraint>  	  	
+  	<varconstraint>width &lt; 2</varconstraint>  	  	
+  	<varconstraint>height &lt; 2</varconstraint>  	  	
+  	<varconstraint>depth &gt; 0.2</varconstraint>  	  	
+  	<varconstraint>width &gt; 0.2</varconstraint>  	  	
+  	<varconstraint>height &gt; 0.2</varconstraint>  	  	 	
+  	
+  	<supportface>BOTTOM</supportface>    	 
+  	
+  	<texture box="0" face="FRONT">hoven_front.jpg</texture>  	
+  </object>
+  
+  
+  
+  
+  
+  <object name="Microwave" class="OtherObject" nboxes="1">
+    <color r="230" g="60" b="140"></color>
+	<variable name="height" coefforigin="0.5">0.3</variable>
+  	<variable name="width" coefforigin="0.5">0.5</variable>
+  	<variable name="depth" coefforigin="0.5">0.4</variable>  	  	  	  	  	
+  	
+  	<supportconstraint box="0" face="BOTTOM">-height/2</supportconstraint>
+  	<supportconstraint box="0" face="TOP">height/2</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>
+   	<supportconstraint box="0" face="BACK">-depth/2</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">depth/2</supportconstraint>
+  	
+  	<varconstraint>depth &lt; 1</varconstraint>  	  	
+  	<varconstraint>width &lt; 1</varconstraint>  	  	
+  	<varconstraint>height &lt; 1</varconstraint>  	  	
+  	<varconstraint>depth &gt; 0.1</varconstraint>  	  	
+  	<varconstraint>width &gt; 0.1</varconstraint>  	  	
+  	<varconstraint>height &gt; 0.1</varconstraint>  	  	 	
+  	
+  	<supportface>BOTTOM</supportface>    	
+  	<supportface>BACK</supportface> 
+  	
+  	<texture box="0" face="FRONT">hoven_front.jpg</texture>  	
+  </object>
+  
+  
+  
+  
+  
+  <object name="Dishwasher" class="Cupboard" nboxes="1">
+    <color r="60" g="140" b="230"></color>
+	<variable name="height" coefforigin="0.5">1</variable>
+  	<variable name="width" coefforigin="0.5">1</variable>
+  	<variable name="depth" coefforigin="0.5">1</variable>  	  	  	  	  	
+  	
+  	<supportconstraint box="0" face="BOTTOM">-height/2</supportconstraint>
+  	<supportconstraint box="0" face="TOP">height/2</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>
+   	<supportconstraint box="0" face="BACK">-depth/2</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">depth/2</supportconstraint>
+  	
+  	<varconstraint>depth &lt; 2</varconstraint>  	  	
+  	<varconstraint>width &lt; 2</varconstraint>  	  	
+  	<varconstraint>height &lt; 2</varconstraint>  	  	
+  	<varconstraint>depth &gt; 0.2</varconstraint>  	  	
+  	<varconstraint>width &gt; 0.2</varconstraint>  	  	
+  	<varconstraint>height &gt; 0.2</varconstraint>  	  	 	
+  	
+  	<supportface>BOTTOM</supportface>    
+  	
+  	<texture box="0" face="FRONT">dishwasher_front.jpg</texture> 	  	
+  </object>
+  
+  
+  
+  
+  
+  
+  <object name="Shelf" class="Cupboard" nboxes="1">
+    <color r="200" g="20" b="200"></color>
+	<variable name="height" coefforigin="0.5">0.05</variable>
+  	<variable name="width" coefforigin="0.5">0.5</variable>
+  	<variable name="depth" coefforigin="0.5">0.2</variable>  	  	  	  	  	
+  	
+  	<supportconstraint box="0" face="BOTTOM">-height/2</supportconstraint>
+  	<supportconstraint box="0" face="TOP">height/2</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>
+   	<supportconstraint box="0" face="BACK">-depth/2</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">depth/2</supportconstraint>
+  	
+  	<varconstraint>depth &lt; 1</varconstraint>  	  	
+  	<varconstraint>width &lt; 3</varconstraint>  	  	
+  	<varconstraint>height &lt; 3</varconstraint>  	  	
+  	<varconstraint>depth &gt; 0.03</varconstraint>  	  	
+  	<varconstraint>width &gt; 0.05</varconstraint>  	  	
+  	<varconstraint>height &gt; 0.01</varconstraint>  	  	 	
+  	
+  	<supportface>BACK</supportface>    	  
+  	<supportface>BOTTOM</supportface>  	
+  	
+  	<texture box="0" face="FRONT">shelf_front.jpg</texture> 	  	
+  </object>
+  
+  
+  
+  
+  
+  
+  
+  <object name="Keyboard" class="OtherObject" nboxes="1">
+    <color r="50" g="50" b="50"></color>
+	<variable name="height" coefforigin="0.5">0.05</variable>
+  	<variable name="width" coefforigin="0.5">0.5</variable>
+  	<variable name="depth" coefforigin="0.5">0.2</variable>  	  	  	  	  	
+  	
+  	<supportconstraint box="0" face="BOTTOM">-height/2</supportconstraint>
+  	<supportconstraint box="0" face="TOP">height/2</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>
+   	<supportconstraint box="0" face="BACK">-depth/2</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">depth/2</supportconstraint>
+  	
+  	<varconstraint>depth &lt; 1</varconstraint>  	  	
+  	<varconstraint>width &lt; 3</varconstraint>  	  	
+  	<varconstraint>height &lt; 3</varconstraint>  	  	
+  	<varconstraint>depth &gt; 0.03</varconstraint>  	  	
+  	<varconstraint>width &gt; 0.05</varconstraint>  	  	
+  	<varconstraint>height &gt; 0.01</varconstraint>  	  	 	
+  		  
+  	<supportface>BOTTOM</supportface>  	
+  </object>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <object name="Washing Machine" class="Cupboard" nboxes="1">
+    <color r="140" g="230" b="60"></color>
+	<variable name="height" coefforigin="0.5">1</variable>
+  	<variable name="width" coefforigin="0.5">1</variable>
+  	<variable name="depth" coefforigin="0.5">1</variable>  	  	  	  	  	
+  	
+  	<supportconstraint box="0" face="BOTTOM">-height/2</supportconstraint>
+  	<supportconstraint box="0" face="TOP">height/2</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>
+   	<supportconstraint box="0" face="BACK">-depth/2</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">depth/2</supportconstraint>
+  	
+  	<varconstraint>depth &lt; 2</varconstraint>  	  	
+  	<varconstraint>width &lt; 2</varconstraint>  	  	
+  	<varconstraint>height &lt; 2</varconstraint>  	  	
+  	<varconstraint>depth &gt; 0.2</varconstraint>  	  	
+  	<varconstraint>width &gt; 0.2</varconstraint>  	  	
+  	<varconstraint>height &gt; 0.2</varconstraint>  	
+  	
+  	<texture box="0" face="FRONT">washingmachine_front.jpg</texture>
+  	
+  	<supportface>BOTTOM</supportface>    	  	
+  </object>
+  
+  
+  
+  
+    
+  
+  
+  <object name="Sink" class="OtherObject" nboxes="1">
+    <color r="100" g="255" b="80"></color>
+	<variable name="height" coefforigin="0.5">0.03</variable>
+  	<variable name="width" coefforigin="0.5">0.5</variable>
+  	<variable name="depth" coefforigin="0.5">0.5</variable>  	  	  	  	  	
+  	
+  	<supportconstraint box="0" face="BOTTOM">-height/2</supportconstraint>
+  	<supportconstraint box="0" face="TOP">height/2</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>
+   	<supportconstraint box="0" face="BACK">-depth/2</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">depth/2</supportconstraint>
+  	
+  	<varconstraint>depth &lt; 2</varconstraint>  	  	
+  	<varconstraint>width &lt; 2</varconstraint>  	  	
+  	<varconstraint>height &lt; 0.1</varconstraint>  	  	
+  	<varconstraint>depth &gt; 0.1</varconstraint>  	  	
+  	<varconstraint>width &gt; 0.1</varconstraint>  	  	
+  	<varconstraint>height &gt; 0.01</varconstraint>  	  	 	
+  	
+  	<supportface>BOTTOM</supportface>    	  	
+  </object>
+  
+  
+  
+  
+  
+  
+  
+  <object name="Plant" class="OtherObject" nboxes="1">
+    <color r="100" g="170" b="30"></color>
+	<variable name="height" coefforigin="0.5">0.5</variable>
+  	<variable name="width" coefforigin="0.5">0.3</variable>
+  	<variable name="depth" coefforigin="0.5">0.3</variable>  	  	  	  	  	
+  	
+  	<supportconstraint box="0" face="BOTTOM">-height/2</supportconstraint>
+  	<supportconstraint box="0" face="TOP">height/2</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>
+   	<supportconstraint box="0" face="BACK">-depth/2</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">depth/2</supportconstraint>
+  	
+  	<varconstraint>depth &lt; 2</varconstraint>  	  	
+  	<varconstraint>width &lt; 2</varconstraint>  	  	
+  	<varconstraint>height &lt; 3</varconstraint>  	  	
+  	<varconstraint>depth &gt; 0.05</varconstraint>  	  	
+  	<varconstraint>width &gt; 0.05</varconstraint>  	  	
+  	<varconstraint>height &gt; 0.05</varconstraint>  	  	 	
+  	
+  	<supportface>BOTTOM</supportface>    	  	
+  	<supportface>TOP</supportface>    	  	
+  </object>
+  
+  
+  
+  
+  <object name="Stuff" class="OtherObject" nboxes="1">
+    <color r="160" g="170" b="210"></color>
+	<variable name="height" coefforigin="0.5">0.2</variable>
+  	<variable name="width" coefforigin="0.5">0.2</variable>
+  	<variable name="depth" coefforigin="0.5">0.2</variable>  	  	  	  	  	
+  	
+  	<supportconstraint box="0" face="BOTTOM">-height/2</supportconstraint>
+  	<supportconstraint box="0" face="TOP">height/2</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>
+   	<supportconstraint box="0" face="BACK">-depth/2</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">depth/2</supportconstraint>
+  	
+  	<varconstraint>depth &lt; 4</varconstraint>  	  	
+  	<varconstraint>width &lt; 4</varconstraint>  	  	
+  	<varconstraint>height &lt; 4</varconstraint>  	  	
+  	<varconstraint>depth &gt; 0.03</varconstraint>  	  	
+  	<varconstraint>width &gt; 0.03</varconstraint>  	  	
+  	<varconstraint>height &gt; 0.03</varconstraint>  	  	 	
+  	
+  	<supportface>BOTTOM</supportface>    	  	
+  </object> 
+  
+  
+  
+  
+  
+  
+  <object name="Half Wall" class="Wall" nboxes="1">
+    <color r="128" g="128" b="128"></color>
+	<variable name="height" coefforigin="0.5">1.5</variable>
+  	<variable name="width" coefforigin="0.5">1</variable>
+  	<variable name="thickness" coefforigin="0.5">0.1</variable>  	  	  	  	  	
+  	
+  	<supportconstraint box="0" face="BOTTOM">-height/2</supportconstraint>
+  	<supportconstraint box="0" face="TOP">height/2</supportconstraint>
+  	<supportconstraint box="0" face="LEFT">-width/2</supportconstraint>
+  	<supportconstraint box="0" face="RIGHT">width/2</supportconstraint>
+   	<supportconstraint box="0" face="BACK">-thickness/2</supportconstraint>
+  	<supportconstraint box="0" face="FRONT">thickness/2</supportconstraint>
+  	
+  	<varconstraint>thickness &lt; 2</varconstraint>  	  	
+  	<varconstraint>width &lt; 10</varconstraint>  	  	
+  	<varconstraint>height &lt; 3</varconstraint>  	  	
+  	<varconstraint>thickness &gt; 0.03</varconstraint>  	  	
+  	<varconstraint>width &gt; 0.03</varconstraint>  	  	
+  	<varconstraint>height &gt; 0.03</varconstraint>  	  	 	
+  	
+  	<supportface>BOTTOM</supportface>    	  	
+  </object>
+  
+  
+  
+  
+</objectslibrary>
