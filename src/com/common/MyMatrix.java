@@ -4,7 +4,6 @@
  */
 package com.common;
 
-import com.common.MyVect;
 import javax.vecmath.Matrix3d;
 
 /**
@@ -37,6 +36,18 @@ public class MyMatrix extends Matrix3d {
         set(0, 2, c13);
         set(1, 2, c23);
     }
+    
+    public MyMatrix(MyVect row1, MyVect row2, MyVect row3) {       
+        set(0, 0, row1.x);
+        set(0, 1, row1.y);
+        set(0, 2, row1.z);
+        set(1, 0, row2.x);
+        set(1, 1, row2.y);
+        set(1, 2, row2.z);
+        set(2, 0, row3.x);
+        set(2, 1, row3.y);
+        set(2, 2, row3.z);
+    }
 
     public MyMatrix(double d) { // diagonal matrix
         this(d, d, d);
@@ -46,7 +57,7 @@ public class MyMatrix extends Matrix3d {
         super(c);
     }
 
-    public void set(int i, int j, double v) {
+    public final void set(int i, int j, double v) {
         setElement(i, j, v);
     }
 
@@ -181,25 +192,25 @@ public class MyMatrix extends Matrix3d {
         final public MyMatrix getRotation(Dimension d, double a1, double a2) {
             double c =-a2 / Math.sqrt(a1 * a1 + a2 * a2);
             double s = a1 / Math.sqrt(a1 * a1 + a2 * a2);
-            MyMatrix Q;
+            MyMatrix r;
             switch (d) {
                 case X:  
-                    Q = new MyMatrix(1, c, c);
-                    Q.set(1, 2, -s);
-                    Q.set(2, 1,  s);
+                    r = new MyMatrix(1, c, c);
+                    r.set(1, 2, -s);
+                    r.set(2, 1,  s);
                     break;
                 case Y:
-                    Q = new MyMatrix(c, 1, c);
-                    Q.set(0, 2,  s);
-                    Q.set(2, 0, -s);
+                    r = new MyMatrix(c, 1, c);
+                    r.set(0, 2,  s);
+                    r.set(2, 0, -s);
                     break;
                 default:
-                    Q = new MyMatrix(c, c, 1);
-                    Q.set(0, 1, -s);
-                    Q.set(1, 0,  s);
+                    r = new MyMatrix(c, c, 1);
+                    r.set(0, 1, -s);
+                    r.set(1, 0,  s);
                     break;                    
             }
-            return Q;
+            return r;
         }
     }
 

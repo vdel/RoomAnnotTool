@@ -66,6 +66,10 @@ public class XML {
         public void addContent(String str) {
             e.addContent(str);
         }
+        
+        public boolean hasChild(String child) {
+            return !getChildren(child).isEmpty();
+        }
 
         public XMLNode getChild(String child) throws XMLException {
             List<Element> children = e.getChildren(child);
@@ -78,7 +82,7 @@ public class XML {
             return new XMLNode(children.get(0));
         }
 
-        public List<XMLNode> getChildren(String child) throws XMLException {
+        public List<XMLNode> getChildren(String child) {
             List<Element> children = e.getChildren(child);
             Vector<XMLNode> res = new Vector<XMLNode>(children.size());
             for (Element el : children) {
@@ -154,6 +158,17 @@ public class XML {
             n.setAttribute("z", v.z);
             return n;
         }
+        
+        static public XMLNode fromMatrix(String name, MyMatrix m) {
+            XMLNode n = new XMLNode(name);
+            XMLNode row1 = fromVect("row1", m.getRow(0));
+            XMLNode row2 = fromVect("row2", m.getRow(1));
+            XMLNode row3 = fromVect("row3", m.getRow(2));
+            n.addContent(row1);
+            n.addContent(row2);
+            n.addContent(row3);
+            return n;
+        }
 
         static public MyVect toVect(XMLNode n) throws XMLException {
             MyVect v = new MyVect();
@@ -165,6 +180,18 @@ public class XML {
 
         public MyVect toVect() throws XMLException {
             return toVect(this);
+        }
+        
+        static public MyMatrix toMatrix(XMLNode n) throws XMLException {
+            MyVect row1, row2, row3;
+            row1 = n.getChild("row1").toVect();
+            row2 = n.getChild("row2").toVect();
+            row3 = n.getChild("row3").toVect();
+            return new MyMatrix(row1, row2, row3);
+        }
+
+        public MyMatrix toMatrix() throws XMLException {
+            return toMatrix(this);
         }
     }
 

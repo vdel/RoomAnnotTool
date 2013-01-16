@@ -83,7 +83,7 @@ public class RefineVanishingPoints {
 
     /**************************************************************************/
 
-    void refineFromEdges(ClippedImage image, MyVect[] vp, Vector<Line> vanishingLines) {
+    final void refineFromEdges(ClippedImage image, MyVect[] vp, Vector<Line> vanishingLines) {
         double highTh = 0.1f;
         int minlen = 30;  // pixels
         int devtol = 2;  // pixels
@@ -126,7 +126,7 @@ public class RefineVanishingPoints {
             }
 
             for (int i = 0; i < 3; i++) {
-                findLinesBelongingToVP(lines, vp[i].directToImageCoord(image.getWidth(), image.getHeight()), angleTh[i], i);
+                findLinesBelongingToVP(lines, image.directToImageCoord(vp[i]), angleTh[i], i);
             }
             for (int i = 0; i < 3; i++) {
                 Vector<Line> drawlines = new Vector<Line>();
@@ -147,10 +147,10 @@ public class RefineVanishingPoints {
                 }
 
                 if (dovp[i]) {
-                    vplines = reEstimateVP(vplines, vp[i], angleThAgreement, image.getWidth(), image.getHeight());
+                    vplines = reEstimateVP(vplines, vp[i], angleThAgreement, image);
                 }
                 else {
-                    vplines = findLinesBelongingToVP(vplines, vp[i].directToImageCoord(image.getWidth(), image.getHeight()), angleThAgreement, -1);
+                    vplines = findLinesBelongingToVP(vplines, image.directToImageCoord(vp[i]), angleThAgreement, -1);
                 }
 
                 drawEdges(vpLines, vplines, i == 0 ? 255 * 256 * 256 : (i == 1 ? 255 * 256 : 255));
@@ -444,7 +444,7 @@ public class RefineVanishingPoints {
 
     /**************************************************************************/
 
-    private Vector<Line> reEstimateVP(Vector<Line> lines, MyVect vp, double angTh, double w, double h) {
+    private Vector<Line> reEstimateVP(Vector<Line> lines, MyVect vp, double angTh, ClippedImage image) {
         double maxLength = 0;
         for (Line l : lines) {
             double length = l.v.norm();
@@ -484,7 +484,7 @@ public class RefineVanishingPoints {
             }
         }
 
-        MyVect bestP = vp.directToImageCoord(w, h);
+        MyVect bestP = image.directToImageCoord(vp);
         double scoreMax = getVPScore(lines, bestP, angTh, maxLength);
         double score;
 
@@ -521,7 +521,7 @@ public class RefineVanishingPoints {
         catch (RuntimeException e) {
         }
 
-        bestP = bestP.imageToDirectCoord(w, h);
+        bestP = image.imageToDirectCoord(bestP);
         vp.x = bestP.x;
         vp.y = bestP.y;
         vp.z = bestP.z;

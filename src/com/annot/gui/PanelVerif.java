@@ -12,6 +12,7 @@
 package com.annot.gui;
 
 import com.annot.room.RefineVanishingPoints;
+import com.common.ClippedImage;
 import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
@@ -41,7 +42,7 @@ public class PanelVerif extends javax.swing.JFrame {
 
         setLayout(new BorderLayout());
        
-        panel = new MyPanel(img);                
+        panel = new MyPanel(new ClippedImage(img));                
         add(panel, BorderLayout.CENTER);        
         pack();
         //setMinimumSize(new Dimension(getWidth(), getHeight() + 30));
@@ -59,7 +60,7 @@ public class PanelVerif extends javax.swing.JFrame {
             default: img = vp.vpLines; break;
         }
 
-        panel.setImage(img);
+        panel.setImage(new ClippedImage(img));
     }
 
     /** This method is called from within the constructor to

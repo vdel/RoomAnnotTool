@@ -8,18 +8,18 @@ package com.annot.room;
 import com.annot.room.ObjectManager.FaceType;
 import com.annot.room.ObjectManager.ObjectException;
 import com.annot.room.RefineVanishingPoints.Line;
-import com.sun.j3d.utils.geometry.Primitive;
 import com.common.ClippedImage;
+import com.common.MyMatrix;
 import com.common.MyVect;
 import com.common.XML;
 import com.common.XML.XMLDocument;
 import com.common.XML.XMLException;
 import com.common.XML.XMLNode;
-import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Vector;
 import javax.imageio.ImageIO;
 
@@ -63,12 +63,14 @@ public class Room {
     private MyVect p0, pH, p1;   // lower origin corner, corresponding upper corner, opposite corner
     private RefineVanishingPoints refinedVP;
 
-
     /* Room parameters */
-    private RoomParameters params;
+    protected RoomParameters params;
     private boolean roomOK;
 
-    /* Room floor */
+    /* Point cloud from 3D data */
+    private Vector<MyVect> cloud;
+    
+    /* Room floor, walls, ceiling */
     protected ObjectInstance floor;
     protected ObjectInstance[] walls;
     protected ObjectInstance ceiling;
@@ -85,9 +87,10 @@ public class Room {
         
         // load library
         int nclasses = 0;
-        objectClasses = new HashMap<String, Integer>();
+        objectClasses = new HashMap<>();
         objectLibrary = ObjectManager.loadLibrary(this, file);
-        System.out.println(objectLibrary.size() + " objects loaded:");
+        
+        //System.out.println(objectLibrary.size() + " objects loaded:");
         for (ObjectManager o : objectLibrary.values()) {
             if (o.hasClassName()) {
                 if (!objectClasses.containsKey(o.getClassName())) {
@@ -95,13 +98,14 @@ public class Room {
                     nclasses++;
                 }
                 o.setClassID(objectClasses.get(o.getClassName()).intValue());
-                System.out.println(o.getName() + " (" + o.getClassName() + ")");
+                //System.out.println(o.getName() + " (" + o.getClassName() + ")");
             }
             else {
-                System.out.println(o.getName() + " (no class)");
+                //System.out.println(o.getName() + " (no class)");
             }
         }
 
+        /*
         System.out.println("\n" + objectClasses.size() + " classes loaded:");
         for (String c: objectClasses.keySet()) {
             System.out.println(c);
@@ -119,6 +123,7 @@ public class Room {
                 System.out.println("--> " + o.getName());
             }
         }
+        */
         
         // set a new free room
         floor = null;
@@ -156,7 +161,7 @@ public class Room {
 
     /**************************************************************************/
 
-    public final void clear() {
+    public void clear() {
         corners = new MyVect[6];
         vp = new MyVect[3];
         p0 = null;
@@ -173,8 +178,8 @@ public class Room {
         floor = null;
         ceiling = null;
         walls = null;
-
-        Primitive.clearGeometryCache();
+        
+        cloud = null;
     }
 
     /**************************************************************************/
@@ -246,6 +251,10 @@ public class Room {
     public ObjectInstance getWall(int i) {
         return walls[i];
     }
+    
+    public Vector<MyVect> getCloud() {
+        return cloud;
+    }
 
     /**************************************************************************/
     
@@ -279,7 +288,7 @@ public class Room {
         double w = image.getWidth();
         double h = image.getHeight();
         int i = ct.ordinal();
-        return new MyVect(corners[i].x * w, corners[i].y * h, 1).imageToDirectCoord(w, h);
+        return image.imageToDirectCoord(new MyVect(corners[i].x * w, corners[i].y * h, 1));
     }
 
     /**************************************************************************/
@@ -294,11 +303,11 @@ public class Room {
     }
 
     public boolean isSetVP() {
-        return vp[0] != null && vp[1] != null && vp[2] != null && p0 != null && pH != null && p1 != null && isSetCorners();
+        return vp[0] != null && vp[1] != null && vp[2] != null && p0 != null && p1 != null && pH != null;
     }
 
     public boolean isSetParams() {
-        return params != null && isSetVP();
+        return params != null;
 
     }
 
@@ -310,7 +319,7 @@ public class Room {
 
     private void computeVP() {
         int horizontalVPID;
-        Vector<Line> vanishingLines = new Vector<Line>();
+        Vector<Line> vanishingLines = new Vector<>();
         
         if (isCornerVisible(CornerType.BOTTOMLEFT)) {
             pH = getCorner(CornerType.PH);
@@ -370,9 +379,9 @@ public class Room {
         }
         
         System.out.println("Vanishing points estimation from geometry:");
-        System.out.format("X-axis: (%.0f, %.0f)\n", vp[0].x, vp[0].y);
-        System.out.format("Y-axis: (%.0f, %.0f)\n", vp[1].x, vp[1].y);
-        System.out.format("Z-axis: (%.0f, %.0f)\n", vp[2].x, vp[2].y);
+        System.out.format("X-axis: (%.2f, %.2f)\n", vp[0].x, vp[0].y);
+        System.out.format("Y-axis: (%.2f, %.2f)\n", vp[1].x, vp[1].y);
+        System.out.format("Z-axis: (%.2f, %.2f)\n", vp[2].x, vp[2].y);
 
         addLine(vanishingLines, CornerType.BOTTOMLEFT);
         addLine(vanishingLines, CornerType.TOPLEFT);
@@ -386,9 +395,9 @@ public class Room {
         refinedVP = new RefineVanishingPoints(image, vp, vanishingLines);
 
         System.out.println("Vanishing points re-estimation from image edges:");
-        System.out.format("X-axis: (%.0f, %.0f)\n", vp[0].x, vp[0].y);
-        System.out.format("Y-axis: (%.0f, %.0f)\n", vp[1].x, vp[1].y);
-        System.out.format("Z-axis: (%.0f, %.0f)\n", vp[2].x, vp[2].y);
+        System.out.format("X-axis: (%.2f, %.2f)\n", vp[0].x, vp[0].y);
+        System.out.format("Y-axis: (%.2f, %.2f)\n", vp[1].x, vp[1].y);
+        System.out.format("Z-axis: (%.2f, %.2f)\n", vp[2].x, vp[2].y);
     }
 
     /**************************************************************************/
@@ -452,12 +461,12 @@ public class Room {
     /**************************************************************************/
 
     private void displayRoomParameters() {
-        Point px = params.K.getCol(0).toPoint();
-        Point py = params.K.getCol(1).toPoint();
-        Point pz = params.K.getCol(2).toPoint();
-        System.out.format("X-axis: (%d, %d)\n", px.x, px.y);
-        System.out.format("Y-axis: (%d, %d)\n", py.x, py.y);
-        System.out.format("Z-axis: (%d, %d)\n", pz.x, pz.y);
+        MyVect px = params.KR.getCol(0);
+        MyVect py = params.KR.getCol(1);
+        MyVect pz = params.KR.getCol(2);
+        System.out.format("X-axis: (%.02f, %.02f)\n", px.x / px.z, px.y / px.z);
+        System.out.format("Y-axis: (%.02f, %.02f)\n", py.x / py.z, py.y / py.z);
+        System.out.format("Z-axis: (%.02f, %.02f)\n", pz.x / pz.z, pz.y / pz.z);
 
         System.out.format("Focal distance: fx = %.2f, fy = %.2f\n", params.fx, params.fy);
         System.out.format("Gamma = %.2f\n", params.g);
@@ -572,56 +581,86 @@ public class Room {
         }
         catch (XMLException e) {
         }
+        
         try {
             node = root.getChild("corners");
+            load_corner(node, CornerType.TOPLEFT);
+            load_corner(node, CornerType.TOPRIGHT);
+            load_corner(node, CornerType.BOTTOMRIGHT);
+            load_corner(node, CornerType.BOTTOMLEFT);
+            load_corner(node, CornerType.DEPTHVP);
+            try {
+                load_corner(node, CornerType.PH);
+            }
+            catch(XMLException e) {
+                if (isCornerVisible(CornerType.BOTTOMLEFT)) {
+                    corners[CornerType.PH.ordinal()] = new MyVect(corners[CornerType.TOPLEFT.ordinal()]);
+                }
+                else {
+                    corners[CornerType.PH.ordinal()] = new MyVect(corners[CornerType.TOPRIGHT.ordinal()]);
+                }
+            }            
         }
         catch (XMLException e) {
-            return;
         }
-        load_corner(node, CornerType.TOPLEFT);
-        load_corner(node, CornerType.TOPRIGHT);
-        load_corner(node, CornerType.BOTTOMRIGHT);
-        load_corner(node, CornerType.BOTTOMLEFT);
-        load_corner(node, CornerType.DEPTHVP);
+        
         try {
-            load_corner(node, CornerType.PH);
+            node = root.getChild("vps");                
+            vp[0] = node.getChild("vpx").toVect();
+            vp[1] = node.getChild("vpy").toVect();
+            vp[2] = node.getChild("vpz").toVect();                        
+            p0 = node.getChild("p0").toVect();
+            p1 = node.getChild("p1").toVect();
+            if (node.hasChild("pH")) {
+                pH = node.getChild("pH").toVect();    
+            }
+            else if(isSetCorners()) {
+                pH = new MyVect(corners[CornerType.PH.ordinal()]);
+            }
         }
-        catch(XMLException e) {
-            if (isCornerVisible(CornerType.BOTTOMLEFT)) {
-                corners[CornerType.PH.ordinal()] = new MyVect(corners[CornerType.TOPLEFT.ordinal()]);
+        catch (XMLException e) {
+        }
+                
+        try {
+            node = root.getChild("pointcloud");
+            cloud = new Vector<>();
+            for (XMLNode n : node.getChildren("point")) {
+                cloud.add(n.toVect());
+            }
+        }
+        catch (XMLException e) {
+            cloud = null;
+        }
+
+        try {
+            if (isSetVP()) {
+                node = root.getChild("params");
+                MyVect p = node.getChild("camPosition").toVect();
+                MyVect f = node.getChild("camFocal").toVect();
+                MyVect a = node.getChild("camAngle").toVect();
+                f = f.mul(1. / (image.getClippedWidth() / 2));
+                params = new RoomParameters(image, f, a, p, p1,
+                                        isCornerVisible(CornerType.BOTTOMLEFT),
+                                        isCornerVisible(CornerType.BOTTOMRIGHT),
+                                        defaultHeight);
             }
             else {
-                corners[CornerType.PH.ordinal()] = new MyVect(corners[CornerType.TOPRIGHT.ordinal()]);
+                throw new XMLException("trying new format");
             }
         }
-
-        try {
-            node = root.getChild("vps");
+        catch (XMLException e1) {            
+            try {
+                node = root.getChild("camParams");
+                MyMatrix K = node.getChild("K").toMatrix();
+                MyMatrix R = node.getChild("R").toMatrix();
+                MyVect t = node.getChild("t").toVect();
+                params = new RoomParameters(image, K, R, t, cloud, defaultHeight);
+            }
+            catch (XMLException e2) {
+                return;
+            }
         }
-        catch (XMLException e) {
-            return;
-        }
-        vp[0] = node.getChild("vpx").toVect();
-        vp[1] = node.getChild("vpy").toVect();
-        vp[2] = node.getChild("vpz").toVect();
-        pH = new MyVect(corners[CornerType.PH.ordinal()]);
-        p0 = node.getChild("p0").toVect();
-        p1 = node.getChild("p1").toVect();
-
-        try {
-            node = root.getChild("params");
-        }
-        catch (XMLException e) {
-            return;
-        }
-        MyVect p = node.getChild("camPosition").toVect();
-        MyVect f = node.getChild("camFocal").toVect();
-        MyVect a = node.getChild("camAngle").toVect();
-        params = new RoomParameters(image, f, a, p, p1,
-                                    isCornerVisible(CornerType.BOTTOMLEFT),
-                                    isCornerVisible(CornerType.BOTTOMRIGHT),
-                                    defaultHeight);
-
+        
         try {
             node = root.getChild("room");
             roomOK = true;
@@ -685,43 +724,51 @@ public class Room {
             cornersNode.addContent(save_corner(CornerType.DEPTHVP));
             cornersNode.addContent(save_corner(CornerType.PH));
             annot.addContent(cornersNode);
+        }
 
-            if (isSetVP()) {
-                System.out.println("Vanishing points saved.");
-                XMLNode vpNode = new XMLNode("vps");
-                vpNode.addContent(XMLNode.fromVect("vpx", vp[0]));
-                vpNode.addContent(XMLNode.fromVect("vpy", vp[1]));
-                vpNode.addContent(XMLNode.fromVect("vpz", vp[2]));
-                vpNode.addContent(XMLNode.fromVect("pH", pH));
-                vpNode.addContent(XMLNode.fromVect("p0", p0));
-                vpNode.addContent(XMLNode.fromVect("p1", p1));
-                annot.addContent(vpNode);
+        if (isSetVP()) {
+            System.out.println("Vanishing points saved.");
+            XMLNode vpNode = new XMLNode("vps");
+            vpNode.addContent(XMLNode.fromVect("vpx", vp[0]));
+            vpNode.addContent(XMLNode.fromVect("vpy", vp[1]));
+            vpNode.addContent(XMLNode.fromVect("vpz", vp[2]));            
+            vpNode.addContent(XMLNode.fromVect("p0", p0));
+            vpNode.addContent(XMLNode.fromVect("p1", p1));
+            vpNode.addContent(XMLNode.fromVect("pH", pH));
+            annot.addContent(vpNode);
+        }
+        
+        if (cloud != null) {
+            XMLNode cloudNode = new XMLNode("pointcloud");                     
+            for (MyVect p : cloud) {
+                cloudNode.addContent(XMLNode.fromVect("point", p));
+            }
+            annot.addContent(cloudNode);
+        }
+        
+        if (isSetParams()) {
+            System.out.println("Geometry saved.");
+            XMLNode paramsNode = new XMLNode("params");                                                            
+            paramsNode.addContent(XMLNode.fromMatrix("K", params.K));
+            paramsNode.addContent(XMLNode.fromMatrix("R", params.R));
+            paramsNode.addContent(XMLNode.fromVect("t", params.t));
+            annot.addContent(paramsNode);
 
-                if (isSetParams()) {
-                    System.out.println("Geometry saved.");
-                    XMLNode paramsNode = new XMLNode("params");                                                            
-                    paramsNode.addContent(XMLNode.fromVect("camFocal", new MyVect(params.fx, params.fy, params.g)));
-                    paramsNode.addContent(XMLNode.fromVect("camAngle", params.cameraAngle));
-                    paramsNode.addContent(XMLNode.fromVect("camPosition", params.cameraPosition));
-                    annot.addContent(paramsNode);
-                    
-                    XMLNode roomNode = save_room();
-                    annot.addContent(roomNode);
+            XMLNode roomNode = save_room();
+            annot.addContent(roomNode);
 
-                    XMLNode floorNode = new XMLNode("floor");
-                    floor.toXML(floorNode);
-                    roomNode.addContent(floorNode);
+            XMLNode floorNode = new XMLNode("floor");
+            floor.toXML(floorNode);
+            roomNode.addContent(floorNode);
 
-                    XMLNode ceilingNode = new XMLNode("ceiling");
-                    ceiling.toXML(ceilingNode);
-                    roomNode.addContent(ceilingNode);
+            XMLNode ceilingNode = new XMLNode("ceiling");
+            ceiling.toXML(ceilingNode);
+            roomNode.addContent(ceilingNode);
 
-                    for (int i = 0; i < 4; i++) {
-                        XMLNode wallNode = new XMLNode("wall" + i);
-                        walls[i].toXML(wallNode);
-                        roomNode.addContent(wallNode);
-                    }
-                }
+            for (int i = 0; i < 4; i++) {
+                XMLNode wallNode = new XMLNode("wall" + i);
+                walls[i].toXML(wallNode);
+                roomNode.addContent(wallNode);
             }
         }
         
@@ -742,9 +789,11 @@ public class Room {
 
     private XMLNode save_room() {
         XMLNode roomNode = new XMLNode("room");
+        XMLNode orig = XMLNode.fromVect("origin", params.origin);
         XMLNode dims = XMLNode.fromVect("dimensions", new MyVect(params.depth, 
                                                                params.width,
                                                                params.height));
+        roomNode.addContent(orig);
         roomNode.addContent(dims);
         return roomNode;
     }

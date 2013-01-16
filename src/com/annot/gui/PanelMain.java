@@ -13,11 +13,11 @@ package com.annot.gui;
 
 
 import com.annot.gui.MyCanvas3D.MyCanvas3DListener;
-import com.annot.room.ObjectInstance;
 import com.annot.room.ObjectManager;
 import com.annot.room.ObjectManager.ObjectException;
 import com.common.J3DHelper;
 import com.common.XML.XMLException;
+import com.pose.Pose3D;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -56,6 +56,8 @@ public class PanelMain extends javax.swing.JFrame implements MyCanvas3DListener 
         initComponents();
         setLocation(100, 100);
         pack();
+        
+        Pose3D p = new Pose3D();
 
         panelLayout = null;
         panelVisu3D = null;
@@ -87,7 +89,7 @@ public class PanelMain extends javax.swing.JFrame implements MyCanvas3DListener 
         
         jList1.removeAll();
         DefaultListModel listModel = new DefaultListModel();
-        LinkedList<String> objs = new LinkedList<String>();
+        LinkedList<String> objs = new LinkedList<>();
         for (ObjectManager om : room.getObjects()) {
             if (!om.isPrivate()) {
                 objs.add(om.getName());
@@ -196,6 +198,13 @@ public class PanelMain extends javax.swing.JFrame implements MyCanvas3DListener 
 
     void showPanel3D() {
         hidePanelLayout();
+        if (!room.isSetVP()) {
+            jButton2.setEnabled(false);
+            jCheckBox1.setEnabled(false);
+            jLabel1.setEnabled(false);
+            jSpinner1.setEnabled(false);
+
+        }
         jList1.setEnabled(true);
         jButton5.setEnabled(false);
         jButton6.setEnabled(true);
@@ -583,7 +592,7 @@ public class PanelMain extends javax.swing.JFrame implements MyCanvas3DListener 
             jSpinner1.setValue(Integer.valueOf((int)Math.round(room.getImage().getDistortion() * 100)));
             jCheckBox1.setSelected(room.getParams() == null || room.getParams().fx == room.getParams().fy);
             
-            if(room.isSetCorners()) {
+            if(room.isSetParams() || room.isSetVP()) {                
                 showPanel3D();
                 if (room.getRefinedVP() != null) {
                     jButton7.setEnabled(true);

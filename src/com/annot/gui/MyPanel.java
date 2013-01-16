@@ -5,6 +5,7 @@
 
 package com.annot.gui;
 
+import com.common.ClippedImage;
 import com.common.MyMatrix;
 import com.common.MyVect;
 import java.awt.BorderLayout;
@@ -23,7 +24,7 @@ public class MyPanel extends javax.swing.JPanel {
     static final long serialVersionUID = 0L;
 
     protected int x0, y0;
-    protected BufferedImage image;
+    protected ClippedImage image;
     private LinkedList<Line> lines;
     private LinkedList<double[]> poses;
 
@@ -38,27 +39,27 @@ public class MyPanel extends javax.swing.JPanel {
         }
     }
 
-    public MyPanel(BufferedImage I) {
+    public MyPanel(ClippedImage I) {
         super(new BorderLayout());
         setLocation(0, 0);
         setPreferredSize(new Dimension(I.getWidth(), I.getHeight()));
         image = I;
         x0 = 0;
         y0 = 0;
-        lines = new LinkedList<Line>();
-        poses = new LinkedList<double[]>();
+        lines = new LinkedList<>();
+        poses = new LinkedList<>();
         
         // uniform for screen capture background
         if (false) {
             for (int x = 0; x < image.getWidth(); x++) {
                 for (int y = 0; y < image.getHeight(); y++) {
-                    image.setRGB(x, y, (new Color(0.57f, 0.66f, 1f)).getRGB());
+                    image.getImage().setRGB(x, y, (new Color(0.57f, 0.66f, 1f)).getRGB());
                 }
             }
         }
     }
     
-    public void setImage(BufferedImage img) {
+    public void setImage(ClippedImage img) {
         image = img;
         repaint();
     }
@@ -67,7 +68,7 @@ public class MyPanel extends javax.swing.JPanel {
     public void paint(Graphics g)
     {
         super.paint(g);
-        g.drawImage(image, x0, y0, null);
+        g.drawImage(image.getImage(), x0, y0, null);
         
         int[] j1 = {2, 3, 9, 8, 0, 1, 3, 4, 6, 7, 9, 10, 12};
         int[] j2 = {3, 9, 8, 2, 1, 2, 4, 5, 7, 8, 10, 11, 13};

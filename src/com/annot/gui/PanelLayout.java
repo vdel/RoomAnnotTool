@@ -49,7 +49,7 @@ public class PanelLayout extends javax.swing.JFrame implements MouseListener, Mo
         static final long serialVersionUID = 0L;
 
         public MyExtendedPanel(ClippedImage I) {
-            super(I.getImage());
+            super(I);
             setTitle("Room Layout");
         }
 
@@ -192,7 +192,7 @@ public class PanelLayout extends javax.swing.JFrame implements MouseListener, Mo
     }
 
     void refreshImg() {
-        panel.setImage(room.getImage().getImage());
+        panel.setImage(room.getImage());
         panel.repaint();
     }
 

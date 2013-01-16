@@ -239,7 +239,7 @@ public class ObjectInstance {
             position = face.getX().mul(x).add(
                        face.getY().mul(y)).add(
                        face.getNormal().mul(
-                       -getMinProj(face.getNormal())));
+                       -getMinProjOnAxis(face.getNormal())));
             positionUpdated();
         }
         else {
@@ -347,11 +347,11 @@ public class ObjectInstance {
         return t;
     }
 
-    double getMinProj(MyVect v) {
+    double getMinProjOnAxis(MyVect axis) {
         MyMatrix rot = getRotationMatrix();
-        double min = parts[0].getMinProjOnVAxis(rot, v);
+        double min = parts[0].getMinProjOnAxis(rot, axis);
         for (int i = 1; i < parts.length; i++) {
-            double m = parts[i].getMinProjOnVAxis(rot, v);
+            double m = parts[i].getMinProjOnAxis(rot, axis);
             if (m < min) {
                 min = m;
             }

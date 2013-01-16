@@ -37,7 +37,7 @@ public class MyBox {
             x = new MyVect();
             y = new MyVect();
             n = new MyVect();
-            children = new LinkedList<ObjectInstance>();
+            children = new LinkedList<>();
             
             switch (ft) {
                 case BACK:
@@ -163,6 +163,8 @@ public class MyBox {
                 faces[i] = new Face(this, part.getFace(FaceType.values()[i]), FaceType.values()[i]);
             }
         }
+        
+        setTransDims();
     }
 
     void clear() {
@@ -182,9 +184,13 @@ public class MyBox {
         return parent;
     }
     
-    protected void variableUpdated() {
+    final void setTransDims() {
         translation = getTrans(parent.getVariables());
         dimensions = getDims(parent.getVariables());
+    }
+    
+    protected void variableUpdated() {
+        setTransDims();
     }
 
     public Face getFace(FaceType ft) {
@@ -230,9 +236,9 @@ public class MyBox {
         color = c;
     }
 
-    double getMinProjOnVAxis(MyMatrix objRot, MyVect v) {
+    double getMinProjOnAxis(MyMatrix objRot, MyVect axis) {
         MyVect d = objRot.mul(dimensions).mul(0.5);
-        return v.dot(translation) + Math.min(v.dot(d), -v.dot(d));
+        return axis.dot(translation) + Math.min(axis.dot(d), -axis.dot(d));
     }
     
     // Return bounding box in room coordinate
@@ -250,8 +256,6 @@ public class MyBox {
 
     BBox2D getBoundingBox(Room room, MyMatrix objRot, MyVect objTrans) {
         RoomParameters params = room.getParams();
-        int w = room.getImage().getWidth();
-        int h = room.getImage().getHeight();
         
         MyMatrix rot = new MyMatrix(params.R);
         rot.mul(objRot);
@@ -270,8 +274,8 @@ public class MyBox {
             v = rot.mul(v).add(trans);
             
             if (v.z < znear) {
-                 v = params.F.mul(v);
-                 bound.expand(v.directToImageCoord(w, h).toPoint());
+                 v = params.K.mul(v);
+                 bound.expand(room.getImage().directToImageCoord(v).toPoint());
             }
         }
         return bound;

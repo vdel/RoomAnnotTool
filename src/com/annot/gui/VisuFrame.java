@@ -5,13 +5,10 @@
 
 package com.annot.gui;
 
-import com.annot.gui.MyCanvas3D;
-import com.annot.room.Room;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.dnd.DropTarget;
 import javax.swing.JPanel;
 
 /**
@@ -50,19 +47,19 @@ public class VisuFrame extends Frame {
         setLayout(new BorderLayout());
 
         if (room.hasAttachedImage()) {
-            panel = new MyPanel(room.getImage().getImage());
+            panel = new MyPanel(room.getImage());
             panel.setPreferredSize(new Dimension(room.getImage().getWidth(), room.getImage().getHeight()));
             add(panel, BorderLayout.PAGE_START);
         }
         else {
             panel = null;
         }
-
+      
         JPanel pl = new JPanel();
         pl.setBackground(Color.black);
         pl.setPreferredSize(new Dimension(room.getImage().getXmin(), room.getImage().getClippedHeight()));
         add(pl, BorderLayout.LINE_START);
-
+        
         canvas = new MyCanvas3D(room, panel);
         canvas.setPreferredSize(new Dimension(room.getImage().getClippedWidth(), room.getImage().getClippedHeight()));
         add(canvas, BorderLayout.CENTER);
@@ -88,7 +85,7 @@ public class VisuFrame extends Frame {
     }
 
     public void refreshImg() {
-        panel.setImage(room.getImage().getImage());
+        panel.setImage(room.getImage());
         panel.repaint();
     }
 
@@ -104,7 +101,7 @@ public class VisuFrame extends Frame {
 
     public void addPose(double[] pose) {
         canvas.addPose(pose);
-        panel.addPose(pose, room.getParams().F, room.getParams().R, room.getParams().t);
+        panel.addPose(pose, room.getParams().K, room.getParams().R, room.getParams().t);
         panel.repaint();
     }
 

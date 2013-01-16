@@ -11,6 +11,7 @@ import com.common.ClippedImage;
 import com.common.Descent.NewtonDescent;
 import com.common.MyMatrix;
 import com.common.MyVect;
+import java.util.Vector;
 
 /**
  *
@@ -24,10 +25,11 @@ public class RoomParameters extends NewtonDescent {
 
     double origwidth, origdepth, origheight;
 
-    public double fx, fy, g;    
+    public double fx, fy, g, cx, cy;    
     public double width, depth, height;
-    public MyMatrix F, invF, R, invR, K, invK;
+    public MyMatrix K, invK, R, invR, KR, invKR;
     public MyVect t, cameraPosition, cameraAngle;
+    public MyVect origin;
     
     static class DescentParams {
         Matrix V, W;
@@ -39,14 +41,75 @@ public class RoomParameters extends NewtonDescent {
         g = focal.z;
         cameraAngle = new MyVect(camAngle);
         cameraPosition = new MyVect(camPos);
-
+        
         t = new MyVect();
         updateFRParams();
         t = R.mul(camPos).mul(-1);
-
+      
         origdepth = this.depth = depth;
         origwidth = this.width = width;
         origheight = this.height = height;
+    }
+    
+    RoomParameters(ClippedImage img, MyMatrix _K, MyMatrix _R, MyVect _t, Vector<MyVect> pointCloud, double defaultHeight) {          
+        MyVect ax = _R.getCol(0);
+        MyVect az = _R.getCol(2);
+        cameraAngle = new MyVect();
+        cameraAngle.x = Math.atan2(az.y, az.x);
+        cameraAngle.y = Math.atan2(Math.sqrt(az.x * az.x + az.y * az.y), az.z);
+        ax = MyMatrix.rotationY(-cameraAngle.y).mul(
+                MyMatrix.rotationZ(-cameraAngle.x).mul(ax));
+        cameraAngle.z = Math.atan2(ax.y, ax.x);        
+        
+        R = MyMatrix.rotationZ(cameraAngle.x);
+        R.mul(MyMatrix.rotationY(cameraAngle.y));
+        R.mul(MyMatrix.rotationZ(cameraAngle.z));
+                
+        t = new MyVect(_t);
+        K = new MyMatrix(_K);
+        K.mul(1 / Math.abs(K.get(2, 2)));
+        K.set(2, 2, -1);
+        
+        KR = new MyMatrix(K);
+        KR.mul(R);
+        invK = new MyMatrix(K);
+        invK.invert();
+        invR = new MyMatrix(R);
+        invR.invert();
+        invKR = new MyMatrix(KR);
+        invKR.invert();
+        
+        cameraPosition = invR.mul(t.mul(-1));
+        
+        fx = K.get(0, 0);
+        fy = K.get(1, 1);
+        g = K.get(0, 1);
+        cx = K.get(0, 2);
+        cy = K.get(1, 2);
+        sameFocalXY = fx == fy;
+        
+        if (pointCloud != null) {
+            MyVect min = new MyVect();
+            MyVect max = new MyVect();
+            for (MyVect p : pointCloud) {
+                min.x = Math.min(min.x, p.x);
+                min.y = Math.min(min.y, p.y);
+                min.z = Math.min(min.z, p.z);
+                max.x = Math.max(max.x, p.x);
+                max.y = Math.max(max.y, p.y);
+                max.z = Math.max(max.z, p.z);
+            }
+            origin = min;
+            origdepth = depth = max.x - min.x;
+            origwidth = width = max.y - min.y;
+            origheight = height = max.z - min.z;
+        }
+        else {
+            origin = new MyVect();
+            origdepth = depth = cameraPosition.x;
+            origwidth = width = cameraPosition.y;
+            origheight = height = defaultHeight;
+        }
     }
 
     RoomParameters(ClippedImage img, MyVect focal, MyVect camAngle, MyVect camPos, MyVect p1, boolean visibleLeft, boolean visibleRight, double H) {
@@ -55,7 +118,10 @@ public class RoomParameters extends NewtonDescent {
         fx = focal.x;
         fy = focal.y;
         g = focal.z;
+        cx = cy = 0;
+        sameFocalXY = fx == fy;
         cameraAngle = new MyVect(camAngle);
+        origin = new MyVect();
 
         t = new MyVect();
         updateFRParams();
@@ -71,6 +137,7 @@ public class RoomParameters extends NewtonDescent {
         sameFocalXY = sameF;
         cameraAngle = new MyVect();
         t = new MyVect();
+        origin = new MyVect();
 
         solve(vp, p0, pH, visibleLeft);
 
@@ -104,7 +171,7 @@ public class RoomParameters extends NewtonDescent {
 
     final double projectX(MyVect p, double x) {
         p.z = 1;
-        MyVect ray = invK.mul(p);
+        MyVect ray = invKR.mul(p);
         double lambda = (x - cameraPosition.x) / ray.x;
         MyVect p3D = cameraPosition.add(ray.mul(lambda));
         return p3D.y;
@@ -112,7 +179,7 @@ public class RoomParameters extends NewtonDescent {
 
     final double projectY(MyVect p, double y) {
         p.z = 1;
-        MyVect ray = invK.mul(p);
+        MyVect ray = invKR.mul(p);
         double lambda = (y - cameraPosition.y) / ray.y;
         MyVect p3D = cameraPosition.add(ray.mul(lambda));
         return p3D.x;
@@ -179,25 +246,66 @@ public class RoomParameters extends NewtonDescent {
     private void updateFRParams() {
         Matrix x = param2VectFR();
 
-        Matrix _F, _R, _K;
-        _F = computeF(x);
-        F = Matrix2MyMatrix(_F);
-        invF = Matrix2MyMatrix(_F.inverse());
-        _R = computeR(x);
-        R = Matrix2MyMatrix(_R);
-        invR = Matrix2MyMatrix(_R.inverse());
-        _K = _F.times(_R);
+        Matrix _R, _K;
+        _K = computeK(x);
         K = Matrix2MyMatrix(_K);
         invK = Matrix2MyMatrix(_K.inverse());
+        _R = computeR(x);
+        R = Matrix2MyMatrix(_R);
+        invR = Matrix2MyMatrix(_R.inverse());      
+        KR = new MyMatrix(K);
+        KR.mul(R);
+        invKR = new MyMatrix(KR);
+        invKR.invert();
     }
 
     private void intialize(MyVect[] vp, MyVect p0, MyVect pH, boolean visibleLeft) {
+        Matrix V, A, B, one, w = null;
+        int k;
         // see "Multiple View Geometry", example 8.27
-        Matrix V = new Matrix(3, 3);
-        Matrix A = new Matrix(3, 1);
-        Matrix one = new Matrix(3, 1); 
-
-        Matrix w = null;
+        /*
+        vp[2] = vp[2].mul(0.1);
+        vp[2].z = 1;
+                
+        A = new Matrix(3, 3);
+        B = new Matrix(3, 1);
+        // we assume w4 = 1 and solve Aw = -B (more stable than finding the eigen vector for 0 for [A B]) 
+        int k = 0;
+        for (int i = 0; i < 2; i++) {
+            for (int j = i + 1; j < 3; j++, k++) {
+                A.set(k, 0, vp[i].x * vp[j].x + vp[i].y * vp[j].y);
+                A.set(k, 1, vp[i].x * vp[j].z + vp[i].z * vp[j].x);
+                A.set(k, 2, vp[i].y * vp[j].z + vp[i].z * vp[j].y);
+                B.set(k, 0, vp[i].z * vp[j].z);                
+            }
+        }              
+        w = A.solve(B.times(-1));
+        w.print(5, 5);
+        System.out.println(1 - (w.get(1, 0) * w.get(1, 0) + 
+                                w.get(2, 0) * w.get(2, 0)) / w.get(0, 0));
+        
+        
+        A = new Matrix(3, 3);
+        A.set(0, 0, w.get(0, 0));
+        A.set(1, 1, w.get(0, 0));
+        A.set(0, 2, w.get(1, 0));
+        A.set(2, 0, w.get(1, 0));
+        A.set(1, 2, w.get(2, 0));
+        A.set(2, 1, w.get(2, 0));
+        A.set(2, 2, 1);
+        A.print(5, 5);
+        
+        A.inverse().print(5, 5);
+        
+        CholeskyDecomposition c = new CholeskyDecomposition(A);
+        System.out.println(c.isSPD());
+        c.getL().print(5, 5);
+        Matrix KK = c.getL().transpose().inverse();        
+        KK.print(5, 5);
+          */      
+        V = new Matrix(3, 3);
+        A = new Matrix(3, 1);
+        one = new Matrix(3, 1); 
 
         double[] n = new double[3];
         n[0] = vp[0].norm();
@@ -212,7 +320,7 @@ public class RoomParameters extends NewtonDescent {
         }
         else if (n[2] > n[far2]) {
             far2 = 2;
-        }
+        }               
 
         int attempt = 0;
         while (attempt < 4) {           
@@ -224,7 +332,7 @@ public class RoomParameters extends NewtonDescent {
             }
             attempt++;
             
-            int k = 0;
+            k = 0;
             for (int i = 0; i < 2; i++) {
                 for (int j = i + 1; j < 3; j++, k++) {
                     A.set(k, 0, vp[i].x * vp[j].x + vp[i].y * vp[j].y);                   
@@ -241,7 +349,7 @@ public class RoomParameters extends NewtonDescent {
 
         // previous while may fail. If so we continue with those values and pray.
         fx = fy = Math.sqrt(1 / Math.abs(w.get(0, 0)));
-        g = 0;
+        cx = cy = g = 0;
      
         for (int i = 0; i < 3; i++) {
             V.set(0, i, vp[i].x);
@@ -249,7 +357,7 @@ public class RoomParameters extends NewtonDescent {
             V.set(2, i, 1);
         }        
 
-        Matrix F = computeF(param2VectFR());
+        Matrix F = computeK(param2VectFR());
         Matrix RL = F.inverse().times(V);
         double l1 = RL.getMatrix(0, 2, 0, 0).norm2();
         double l2 = RL.getMatrix(0, 2, 1, 1).norm2();
@@ -293,13 +401,13 @@ public class RoomParameters extends NewtonDescent {
         // Create rotation and projection matrices
         updateFRParams();
 
-        Matrix B = new Matrix(3, 3);
+        B = new Matrix(3, 3);
 
         // correct noise by projecting over z
-        MyVect zproj = invK.mul(pH.sub(p0));
+        MyVect zproj = invKR.mul(pH.sub(p0));
         zproj.x = 0;
         zproj.y = 0;
-        zproj = K.mul(zproj);
+        zproj = KR.mul(zproj);
 
         MyVect midpoint = p0.add(pH).mul(0.5);
         p0 = midpoint.sub(zproj.mul(0.5));
@@ -307,9 +415,9 @@ public class RoomParameters extends NewtonDescent {
         p0.z = 1;
         pH.z = 1;
 
-        B.set(0, 0, K.get(0, 2));
-        B.set(1, 0, K.get(1, 2));
-        B.set(2, 0, K.get(2, 2));
+        B.set(0, 0, KR.get(0, 2));
+        B.set(1, 0, KR.get(1, 2));
+        B.set(2, 0, KR.get(2, 2));
         B.set(0, 1, p0.x);
         B.set(1, 1, p0.y);
         B.set(2, 1, 1);
@@ -321,7 +429,7 @@ public class RoomParameters extends NewtonDescent {
         Matrix v = svd.getV().getMatrix(0, 2, 2, 2);
 
         double l4 = v.get(0, 0) / (height * v.get(1, 0));
-        t = invF.mul(p0).mul(1 / l4);
+        t = invK.mul(p0).mul(1 / l4);
     }
 
     private Matrix param2VectFR() {
@@ -358,7 +466,7 @@ public class RoomParameters extends NewtonDescent {
     }
 
     private Matrix computeG(Matrix x, Matrix V, Matrix W) {
-        Matrix mF  = computeF(x);
+        Matrix mF  = computeK(x);
         Matrix mRT = computeRT(x);
         Matrix mL  = computeL(x);
 
@@ -376,7 +484,7 @@ public class RoomParameters extends NewtonDescent {
         return new Matrix(array, array.length);
     }
 
-    private Matrix computeF(Matrix x) {
+    private Matrix computeK(Matrix x) {
         Matrix mF = new Matrix(3, 3);
         mF.set(0, 0, x.get(6, 0));
         mF.set(1, 1, x.get(sameFocalXY ? 6 : 8, 0));
@@ -450,7 +558,7 @@ public class RoomParameters extends NewtonDescent {
     private double[] computeDG(Matrix x, Matrix W, int i) {
         Matrix mF, mRT, mL;
         Matrix DF, DRT;
-        mF  = computeF(x);
+        mF  = computeK(x);
         mRT = computeRT(x);
         mL  = computeL(x);
         DF  = computeDF(i);

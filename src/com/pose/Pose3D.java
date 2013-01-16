@@ -147,7 +147,7 @@ public class Pose3D extends NewtonLogBarrierDescent {
     }
     
     protected static class VariableManager {
-        private List<Var> variables = new LinkedList<Var>();
+        private List<Var> variables = new LinkedList<>();
         private boolean freezed = false;
         private Matrix x, min, max;
         
@@ -270,10 +270,11 @@ public class Pose3D extends NewtonLogBarrierDescent {
         double projX, projY;
         double toRad = Math.PI / 180.;
         
-        List<Segment> children = new LinkedList<Segment>();
+        List<Segment> children = new LinkedList<>();
                 
         Joint(JointType jt, VariableManager vars) {
             this.jt = jt;
+            Var vx, vy, vz;
             switch (jt) {
                 case R_ANKLE:
                     rot = null;
@@ -281,8 +282,11 @@ public class Pose3D extends NewtonLogBarrierDescent {
                 case R_KNEE:
                     rot = new Rotation(vars, new Var(20 * toRad, 0, 170 * toRad), new Cst(), new Cst());
                     break;
-                case R_HIP:
-                    rot = new Rotation(vars, new Var(-20 * toRad, -170 * toRad, 0), new Var(-20 * toRad, -45 * toRad, 10 * toRad), new Var(-10 * toRad, -45 * toRad, 20 * toRad));
+                case R_HIP:                    
+                    vx = new Var(-20 * toRad, -170 * toRad, 0);
+                    vy = new Var(-20 * toRad, -45 * toRad, 10 * toRad);
+                    vz = new Var(-10 * toRad, -45 * toRad, 20 * toRad);
+                    rot = new Rotation(vars, vx, vy, vz);
                     break;    
                 case L_ANKLE:
                     rot = null;
@@ -291,7 +295,10 @@ public class Pose3D extends NewtonLogBarrierDescent {
                     rot = new Rotation(vars, new Var(20 * toRad, 0, 170 * toRad), new Cst(), new Cst());
                     break;
                 case L_HIP:
-                    rot = new Rotation(vars, new Var(-20 * toRad, -170 * toRad, 0), new Var(20 * toRad, -10 * toRad, 45 * toRad), new Var(10 * toRad, -20 * toRad, 45 * toRad));
+                    vx = new Var(-20 * toRad, -170 * toRad, 0);
+                    vy = new Var(20 * toRad, -10 * toRad, 45 * toRad);
+                    vz = new Var(10 * toRad, -20 * toRad, 45 * toRad);
+                    rot = new Rotation(vars, vx, vy, vz);
                     break;
                 case R_WRIST:
                     rot = null;
@@ -300,7 +307,10 @@ public class Pose3D extends NewtonLogBarrierDescent {
                     rot = new Rotation(vars, new Cst(), new Var(10 * toRad, 0, 170 * toRad), new Cst());
                     break;
                 case R_SHOULDER:
-                    rot = new Rotation(vars, new Var(-10 * toRad, -100 * toRad, 10 * toRad), new Var(0 * toRad, -20 * toRad, 135 * toRad), new Var(80 * toRad, -90 * toRad, 110 * toRad));
+                    vx = new Var(-10 * toRad, -100 * toRad, 10 * toRad);
+                    vy = new Var(0 * toRad, -20 * toRad, 135 * toRad);
+                    vz = new Var(80 * toRad, -90 * toRad, 110 * toRad);
+                    rot = new Rotation(vars, vx, vy, vz);
                     break;
                 case L_WRIST:
                     rot = null;
@@ -309,10 +319,15 @@ public class Pose3D extends NewtonLogBarrierDescent {
                     rot = new Rotation(vars, new Cst(), new Var(-10 * toRad, -170 * toRad, 0), new Cst());
                     break;
                 case L_SHOULDER:
-                    rot = new Rotation(vars, new Var(-10 * toRad, -100 * toRad, 10 * toRad), new Var(0 * toRad, -135 * toRad, 20 * toRad), new Var(-80 * toRad, -110 * toRad, 90 * toRad));
+                    vx = new Var(-10 * toRad, -100 * toRad, 10 * toRad);
+                    vy = new Var(0 * toRad, -135 * toRad, 20 * toRad);
+                    vz = new Var(-80 * toRad, -110 * toRad, 90 * toRad);
+                    rot = new Rotation(vars, vx, vy, vz);
                     break;    
                 case NECK:
-                    rot = new Rotation(vars, new Var(10 * toRad, -30 * toRad, 30 * toRad), new Cst(), new Var(-30 * toRad, 30 * toRad));
+                    vx = new Var(10 * toRad, -30 * toRad, 30 * toRad);
+                    vz = new Var(-30 * toRad, 30 * toRad);
+                    rot = new Rotation(vars, vx, new Cst(), vz);
                     break;
                 case TOP_HEAD:
                     rot = null;
@@ -321,10 +336,16 @@ public class Pose3D extends NewtonLogBarrierDescent {
                     rot = new Rotation(vars, new Var(), new Var(), new Var());
                     break;
                 case THORAX:
-                    rot = new Rotation(vars, new Var(5 * toRad, -5 * toRad, 40 * toRad), new Var(-15 * toRad, 15 * toRad), new Var(-15 * toRad, 15 * toRad));
+                    vx = new Var(5 * toRad, -5 * toRad, 40 * toRad);
+                    vy = new Var(-15 * toRad, 15 * toRad);
+                    vz = new Var(-15 * toRad, 15 * toRad);
+                    rot = new Rotation(vars, vx, vy, vz);
                     break;
                 case ABDOMEN:
-                    rot = new Rotation(vars, new Var(5 * toRad, -5 * toRad, 40 * toRad), new Var(-15 * toRad, 15 * toRad), new Var(-15 * toRad, 15 * toRad));
+                    vx = new Var(5 * toRad, -5 * toRad, 40 * toRad);
+                    vy = new Var(-15 * toRad, 15 * toRad);
+                    vz = new Var(-15 * toRad, 15 * toRad);
+                    rot = new Rotation(vars, vx, vy, vz);
                     break;
             }
         }
@@ -503,8 +524,8 @@ public class Pose3D extends NewtonLogBarrierDescent {
     
     Joint root;
     
-    List<Joint> joints = new LinkedList<Joint>();
-    List<Segment> segments = new LinkedList<Segment>();
+    List<Joint> joints = new LinkedList<>();
+    List<Segment> segments = new LinkedList<>();
     VariableManager variables = new VariableManager();
     
     Var xHip = new Var();
@@ -875,10 +896,7 @@ public class Pose3D extends NewtonLogBarrierDescent {
 
                         variables.setVals(solve(null, initeps, 1, false));
 
-                        effort = evaluateEffort();
-                        //System.out.println("RX: effort = " + effort);
-                        if (effort < minEffort) {
-                            minEffort = effort;
+                        if (evaluateEffort() < minEffort) {
                             best = variables.getVals(); 
                         }
                     }

@@ -41,6 +41,7 @@ public class MyBehavior extends Behavior implements MouseListener, MouseMotionLi
     MyVect rotation;
     boolean[] pressed;
     Point clicked;
+    Point lastMousePos;
     double step;
     boolean dragged;
     boolean potentialDeselect;
@@ -59,6 +60,7 @@ public class MyBehavior extends Behavior implements MouseListener, MouseMotionLi
         translation = new MyVect();
         rotation = new MyVect();
         clicked = new Point();
+        lastMousePos = new Point();
         pressed = new boolean[3];
         pressed[0] = false;
         pressed[1] = false;
@@ -118,10 +120,29 @@ public class MyBehavior extends Behavior implements MouseListener, MouseMotionLi
                 break;
             case KeyEvent.VK_RIGHT:
                 translation = translation.add(getCameraX().mul(-step));
-                break;
+                break;    
+            case KeyEvent.VK_DELETE:
+                if (!room.readOnly()) {
+                    removeSelectedObject();
+                }
+                break;                
             case KeyEvent.VK_CONTROL:
                 controlPressed = true;
                 break;
+            case KeyEvent.VK_ALT:
+                if (!pressed[1]) {
+                    mousePressed(MouseEvent.BUTTON2, lastMousePos);
+                }
+                System.out.println(pressed[1]);
+                break;
+            case KeyEvent.VK_SHIFT:                
+                if (!pressed[2]) {
+                    mousePressed(MouseEvent.BUTTON3, lastMousePos);
+                }
+                break;   
+            case KeyEvent.VK_SPACE:
+                 canvas.setDefaultView(room.getParams());
+                break;  
             default:
         }
     }
@@ -129,17 +150,15 @@ public class MyBehavior extends Behavior implements MouseListener, MouseMotionLi
     @Override
     public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_DELETE:
-                if (!room.readOnly()) {
-                    removeSelectedObject();
-                }
-                break;
-            case KeyEvent.VK_SPACE:
-                 canvas.setDefaultView(room.getParams());
-                break;
             case KeyEvent.VK_CONTROL:
                 controlPressed = false;
+                break;                
+            case KeyEvent.VK_ALT:
+                mouseReleased(MouseEvent.BUTTON2);
                 break;
+            case KeyEvent.VK_SHIFT:
+                mouseReleased(MouseEvent.BUTTON3);
+                break;                         
             default:
         }
     }
@@ -204,14 +223,18 @@ public class MyBehavior extends Behavior implements MouseListener, MouseMotionLi
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if(e.getButton() == MouseEvent.BUTTON2) {
+        mousePressed(e.getButton(), e.getPoint());
+    }
+    
+    public void mousePressed(int button, Point p) {
+        if(button == MouseEvent.BUTTON2) {
             pressed[1] = true;
-            clicked.x = e.getPoint().x;
-            clicked.y = e.getPoint().y;
+            clicked.x = p.x;
+            clicked.y = p.y;
         }
         
-        if(e.getButton() == MouseEvent.BUTTON1 || e.getButton() == MouseEvent.BUTTON3) {          
-            MyPickResult r = canvas.pick(e.getX(), e.getY());
+        if(button == MouseEvent.BUTTON1 || button == MouseEvent.BUTTON3) {                      
+            MyPickResult r = canvas.pick(p.x, p.y);
             if (r != null) {
                 selectedFace = r.box.getFaceType(r.shape);
                 if (r.box != selectedBox && !r.box.isSelectionBox) {
@@ -227,11 +250,11 @@ public class MyBehavior extends Behavior implements MouseListener, MouseMotionLi
                 deselect();
             }
             
-            if(e.getButton() == MouseEvent.BUTTON1) {
+            if(button == MouseEvent.BUTTON1) {
                 pressed[0] = true;
                 pressed[2] = false;                
             }
-            if(e.getButton() == MouseEvent.BUTTON3) {
+            if(button == MouseEvent.BUTTON3) {
                 pressed[2] = true;
                 pressed[0] = false;
 
@@ -239,7 +262,7 @@ public class MyBehavior extends Behavior implements MouseListener, MouseMotionLi
                         !selectedBox.getParentObject().isPrivate()) {
                    resize = new ConstrainedResize(selectedBox.getParentObject(), 
                                                   selectedBox, selectedFace,
-                                                  getCameraPos(), canvas.getRay(e.getX(), e.getY()));
+                                                  getCameraPos(), canvas.getRay(p.x, p.y));
                 }
             }
         }
@@ -247,7 +270,11 @@ public class MyBehavior extends Behavior implements MouseListener, MouseMotionLi
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if(e.getButton() == MouseEvent.BUTTON1) {
+        mouseReleased(e.getButton());
+    }
+    
+    public void mouseReleased(int button) {    
+        if(button == MouseEvent.BUTTON1) {
             if (!room.readOnly() && 
                     selectedBox != null && 
                     selectedBox.getParentObject().isPrivate() && 
@@ -300,10 +327,10 @@ public class MyBehavior extends Behavior implements MouseListener, MouseMotionLi
                 deselect();
             }
         }
-        if(e.getButton() == MouseEvent.BUTTON2) {
+        if(button == MouseEvent.BUTTON2) {
             pressed[1] = false;            
         }
-        if(e.getButton() == MouseEvent.BUTTON3) {
+        if(button == MouseEvent.BUTTON3) {
             pressed[2] = false;
             resize = null;
             ObjectInstance3D parent = selectedBox.getParentObject();
@@ -319,6 +346,10 @@ public class MyBehavior extends Behavior implements MouseListener, MouseMotionLi
 
     @Override
     public void mouseMoved(MouseEvent e) {
+        lastMousePos = e.getPoint();
+        if (pressed[0] || pressed[1] || pressed[2]) {
+            mouseDragged(e);
+        }
     }
 
     @Override

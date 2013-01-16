@@ -128,8 +128,6 @@ public class MyBox3D extends MyBox {
         }
         
         void drawOnPanel(MyPanel panel, MyMatrix camProj, MyMatrix camRot, MyVect camTrans, MyVect dims, Color color) {
-            int w = panel.image.getWidth();
-            int h = panel.image.getHeight();
             MyVect vx = getX().mul(Math.abs(dims.dot(getX()) / 2));
             MyVect vy = getY().mul(Math.abs(dims.dot(getY()) / 2));
             MyVect vz = getNormal().mul(Math.abs(dims.dot(getNormal()) / 2));
@@ -162,7 +160,8 @@ public class MyBox3D extends MyBox {
                 p1 = camProj.mul(p1);
                 p2 = camProj.mul(p2);
 
-                panel.addLine(p1.directToImageCoord(w, h).toPoint(), p2.directToImageCoord(w, h).toPoint(), color);
+                panel.addLine(panel.image.directToImageCoord(p1).toPoint(), 
+                              panel.image.directToImageCoord(p2).toPoint(), color);
             }           
         }
         
@@ -207,10 +206,12 @@ public class MyBox3D extends MyBox {
             faces[i] = new Face3D(this, part.getFace(FaceType.values()[i]), FaceType.values()[i]);
         }
         o.getTransformGroup().addChild(tg);
+        
+        variableUpdated();
     }
     
     @Override
-    protected void variableUpdated() {
+    protected final void variableUpdated() {
         super.variableUpdated();
         for (int i = 0; i < 6; i++) {
             ((Face3D)faces[i]).variableUpdated();
@@ -317,14 +318,14 @@ public class MyBox3D extends MyBox {
         for (int i = 0; i < 6; i++) {
             MyVect obj2Face = faces[i].getNormal().mul(Math.abs(faces[i].getNormal().dot(getDims()) / 2));
             if (obj2Cam.sub(obj2Face).dot(faces[i].getNormal()) < 0) {
-                ((Face3D)faces[i]).drawOnPanel(panel, params.F, rot, trans, getDims(), c);
+                ((Face3D)faces[i]).drawOnPanel(panel, params.K, rot, trans, getDims(), c);
             }
         }
         c = new Color(255, 255, 255);
         for (int i = 0; i < 6; i++) {
             MyVect obj2Face = faces[i].getNormal().mul(Math.abs(faces[i].getNormal().dot(getDims()) / 2));
             if (obj2Cam.sub(obj2Face).dot(faces[i].getNormal()) >= 0) {
-                ((Face3D)faces[i]).drawOnPanel(panel, params.F, rot, trans, getDims(), c);
+                ((Face3D)faces[i]).drawOnPanel(panel, params.K, rot, trans, getDims(), c);
             }
         }
     }

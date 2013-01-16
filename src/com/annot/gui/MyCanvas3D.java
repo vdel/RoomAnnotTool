@@ -6,7 +6,6 @@ package com.annot.gui;
 
 import Jama.Matrix;
 import com.annot.gui.MyBox3D.J3DBox;
-import com.annot.gui.MyBox3D.MySelectionBox;
 import com.annot.room.ObjectInstance.NoSupportFaceException;
 import com.annot.room.ObjectManager.FaceType;
 import com.annot.room.Room.NoSuchObjectException;
@@ -21,14 +20,20 @@ import com.sun.j3d.utils.universe.ViewingPlatform;
 import com.common.J3DHelper;
 import com.common.MyMatrix;
 import com.common.MyVect;
+import com.sun.j3d.utils.geometry.Primitive;
+import com.sun.j3d.utils.geometry.Sphere;
+import java.awt.Color;
+import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.Vector;
 import javax.media.j3d.Background;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
@@ -130,15 +135,41 @@ public class MyCanvas3D extends Canvas3D implements DropTargetListener {
         // Set mouse and keyboard
         createBehaviourInteractors(room);
 
-        // Attach to universe
-        universe.addBranchGraph(rootGroup);
-        
         // Centrate floor center on origin
         Transform3D t = new Transform3D();
         t.setTranslation(new MyVect(-room.getParams().depth / 2, 
                                     -room.getParams().width / 2, 0));
         floorTransform.setTransform(t);
         room.getFloor().branchGroupAttach(floorTransform);
+        
+        // Set up point cloud
+        if (room.getCloud() != null) {            
+            RoomParameters params = room.getParams();
+            Vector<MyVect> cloud = room.getCloud();
+            BufferedImage image = room.getImage().getImage();
+            
+            for (int i = 0; i < room.getCloud().size(); i += 16) {
+                MyVect vpos = params.K.mul(params.R.mul(cloud.get(i)).add(params.t));
+                Point pos = room.getImage().directToImageCoord(vpos).toPoint();
+                Color3f color;
+                if (0 <= pos.x && pos.x < room.getImage().getWidth() &&
+                    0 <= pos.y && pos.y < room.getImage().getHeight()) {
+                    color = new Color3f(new Color(image.getRGB(pos.x, pos.y)));
+                }
+                else {
+                    color = new Color3f(1.f, 1.f, 1.f);
+                }                
+                t = new Transform3D();
+                t.setTranslation(cloud.get(i));
+                TransformGroup tg = J3DHelper.newTransformGroup(t);
+                tg.addChild(new Sphere(0.025f, Primitive.GENERATE_NORMALS, 
+                                       4, J3DHelper.getDefaultAppearance(color)));
+                floorTransform.addChild(tg);
+            }
+        }
+        
+        // Attach to universe
+        universe.addBranchGraph(rootGroup);        
     }
 
     public void close() {
@@ -273,15 +304,14 @@ public class MyCanvas3D extends Canvas3D implements DropTargetListener {
                 String name = (String) dtde.getTransferable().getTransferData(DataFlavor.stringFlavor);
                 try {
                     object = room.newObject(name);
+                    object.select();
                 } catch (NoSuchObjectException e) {
                     dtde.rejectDrag();
                 }
             } else {
                 dtde.rejectDrag();
             }
-        } catch (UnsupportedFlavorException e) {
-            dtde.rejectDrag();
-        } catch (IOException e) {
+        } catch (UnsupportedFlavorException | IOException e) {
             dtde.rejectDrag();
         }
     }
@@ -345,6 +375,7 @@ public class MyCanvas3D extends Canvas3D implements DropTargetListener {
     public void drop(DropTargetDropEvent dtde) {
         if (object != null) {
             setModified(object);
+            requestFocus();
         } else if (panel != null) { // panel may be null for 3D visualization only
             panel.clearLines();
             panel.repaint();
@@ -399,8 +430,8 @@ public class MyCanvas3D extends Canvas3D implements DropTargetListener {
 
     public void setDefaultView(RoomParameters params) {
         Transform3D t = new Transform3D();
-        double fovx = room.getImage().getClippedWidth() / (2 * room.getParams().fx);
-        double aspect = ((double) room.getImage().getClippedWidth()) / room.getImage().getHeight();
+        double fovx = 1 / room.getParams().fx;
+        double aspect = ((double) room.getImage().getWidth()) / room.getImage().getHeight();
         double znear = 0.001;
         double zfar = 1000;
         double alpha = (zfar - znear) / (2 * znear * zfar);

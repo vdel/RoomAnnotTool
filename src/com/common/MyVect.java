@@ -141,22 +141,6 @@ public class MyVect extends Vector3d {
         return x + y + z;
     }
 
-    static public MyVect imageToDirectCoord(MyVect v, double w, double h) {
-        return new MyVect(v.x / v.z - w / 2, -(v.y / v.z - h / 2), 1);            
-    }
-
-    public MyVect imageToDirectCoord(double w, double h) {
-        return imageToDirectCoord(this, w, h);
-    }
-
-    static public MyVect directToImageCoord(MyVect v, double w, double h) {
-        return new MyVect(v.x / v.z + w / 2, -(v.y / v.z) + h / 2, 1);
-    }
-
-    public MyVect directToImageCoord(double w, double h) {
-        return directToImageCoord(this, w, h);
-    }
-
     public void print() {
         System.out.println(x + "\t" + y + "\t" + z);
     }

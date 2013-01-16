@@ -50,7 +50,7 @@ public class ObjectInstance3D extends ObjectInstance {
         selected = false;
         locked = false;
         
-        resizeBinds = new LinkedList<ConstrainedResize>();
+        resizeBinds = new LinkedList<>();
     }
     
     @Override
@@ -102,6 +102,12 @@ public class ObjectInstance3D extends ObjectInstance {
         else {
             return false;
         }        
+    }
+    
+    @Override
+    public void detach() {
+        super.detach();
+        branchGroupDetach();
     }
 
     Transform3D getTransform(MyVect pos) {
