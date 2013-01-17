@@ -67,6 +67,8 @@ public class MyCanvas3D extends Canvas3D implements DropTargetListener {
     private BranchGroup rootGroup;
     private TransformGroup rootTransform;
     private TransformGroup floorTransform;   
+    private BranchGroup cloudGroup;
+    private boolean cloudVisible;
     private MyBehavior behavior;
     private View view;
     private ViewInfo viewInfo;
@@ -164,9 +166,11 @@ public class MyCanvas3D extends Canvas3D implements DropTargetListener {
                 TransformGroup tg = J3DHelper.newTransformGroup(t);
                 tg.addChild(new Sphere(0.025f, Primitive.GENERATE_NORMALS, 
                                        4, J3DHelper.getDefaultAppearance(color)));
-                floorTransform.addChild(tg);
+                cloudGroup.addChild(tg);
             }
         }
+        floorTransform.addChild(cloudGroup);
+        cloudVisible = true;
         
         // Attach to universe
         universe.addBranchGraph(rootGroup);        
@@ -181,6 +185,7 @@ public class MyCanvas3D extends Canvas3D implements DropTargetListener {
         rootGroup = null;
         rootTransform = null;
         floorTransform = null;
+        cloudGroup = null;
         behavior = null;
         view = null;
         viewInfo = null;
@@ -222,6 +227,7 @@ public class MyCanvas3D extends Canvas3D implements DropTargetListener {
         rootGroup = J3DHelper.newBranchGroup();
         rootTransform = J3DHelper.newTransformGroup();        
         floorTransform = J3DHelper.newTransformGroup();
+        cloudGroup = J3DHelper.newBranchGroup();
         rootGroup.addChild(rootTransform);
         rootTransform.addChild(floorTransform);
         
@@ -248,6 +254,17 @@ public class MyCanvas3D extends Canvas3D implements DropTargetListener {
         behavior = new MyBehavior(room, this, rootTransform);
         behavior.setSchedulingBounds(bounds);
         rootGroup.addChild(behavior);
+    }
+    
+    public void togglePointCloud() {
+        if (cloudVisible) {
+            cloudGroup.detach();
+            cloudVisible = false;
+        }
+        else {
+            floorTransform.addChild(cloudGroup);
+            cloudVisible = true;
+        }            
     }
 
     public void setPickTool() {
@@ -311,7 +328,9 @@ public class MyCanvas3D extends Canvas3D implements DropTargetListener {
             } else {
                 dtde.rejectDrag();
             }
-        } catch (UnsupportedFlavorException | IOException e) {
+        } catch (IOException e) {
+            dtde.rejectDrag();
+        } catch (UnsupportedFlavorException e) {
             dtde.rejectDrag();
         }
     }

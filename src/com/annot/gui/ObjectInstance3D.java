@@ -50,7 +50,7 @@ public class ObjectInstance3D extends ObjectInstance {
         selected = false;
         locked = false;
         
-        resizeBinds = new LinkedList<>();
+        resizeBinds = new LinkedList<ConstrainedResize>();
     }
     
     @Override

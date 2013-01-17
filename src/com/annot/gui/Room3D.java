@@ -39,7 +39,7 @@ public class Room3D extends Room {
         walls3D[3] = (ObjectInstance3D)walls[3];
          
         LinkedList<ConstrainedResize> resizeBinds;        
-        resizeBinds = new LinkedList<>();
+        resizeBinds = new LinkedList<ConstrainedResize>();
         resizeBinds.add(new ConstrainedResize(floor3D, floor3D.getPart(0).getFace(ObjectManager.FaceType.LEFT), true));
         resizeBinds.add(new ConstrainedResize(ceiling3D, ceiling3D.getPart(0).getFace(ObjectManager.FaceType.LEFT), false));
         resizeBinds.add(new ConstrainedResize(walls3D[1], walls3D[1].getPart(0).getFace(ObjectManager.FaceType.LEFT), false));
@@ -47,7 +47,7 @@ public class Room3D extends Room {
         resizeBinds.add(new ConstrainedResize(walls3D[3], walls3D[3].getPart(0).getFace(ObjectManager.FaceType.RIGHT), false));
         walls3D[0].setResizeBinds(resizeBinds);
 
-        resizeBinds = new LinkedList<>();
+        resizeBinds = new LinkedList<ConstrainedResize>();
         resizeBinds.add(new ConstrainedResize(floor3D, floor3D.getPart(0).getFace(ObjectManager.FaceType.BACK), true));
         resizeBinds.add(new ConstrainedResize(ceiling3D, ceiling3D.getPart(0).getFace(ObjectManager.FaceType.BACK), false));
         resizeBinds.add(new ConstrainedResize(walls3D[0], walls3D[0].getPart(0).getFace(ObjectManager.FaceType.RIGHT), false));
@@ -55,7 +55,7 @@ public class Room3D extends Room {
         resizeBinds.add(new ConstrainedResize(walls3D[3], walls3D[3].getPart(0).getFace(ObjectManager.FaceType.BACK), false));
         walls3D[1].setResizeBinds(resizeBinds);
 
-        resizeBinds = new LinkedList<>();
+        resizeBinds = new LinkedList<ConstrainedResize>();
         resizeBinds.add(new ConstrainedResize(floor3D, floor3D.getPart(0).getFace(ObjectManager.FaceType.RIGHT), true));
         resizeBinds.add(new ConstrainedResize(ceiling3D, ceiling3D.getPart(0).getFace(ObjectManager.FaceType.RIGHT), false));
         resizeBinds.add(new ConstrainedResize(walls3D[0], walls3D[0].getPart(0).getFace(ObjectManager.FaceType.BACK), false));
@@ -63,7 +63,7 @@ public class Room3D extends Room {
         resizeBinds.add(new ConstrainedResize(walls3D[3], walls3D[3].getPart(0).getFace(ObjectManager.FaceType.LEFT), false));
         walls3D[2].setResizeBinds(resizeBinds);
 
-        resizeBinds = new LinkedList<>();
+        resizeBinds = new LinkedList<ConstrainedResize>();
         resizeBinds.add(new ConstrainedResize(floor3D, floor3D.getPart(0).getFace(ObjectManager.FaceType.FRONT), true));
         resizeBinds.add(new ConstrainedResize(ceiling3D, ceiling3D.getPart(0).getFace(ObjectManager.FaceType.FRONT), false));
         resizeBinds.add(new ConstrainedResize(walls3D[0], walls3D[0].getPart(0).getFace(ObjectManager.FaceType.LEFT), false));

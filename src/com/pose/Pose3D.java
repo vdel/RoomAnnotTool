@@ -147,7 +147,7 @@ public class Pose3D extends NewtonLogBarrierDescent {
     }
     
     protected static class VariableManager {
-        private List<Var> variables = new LinkedList<>();
+        private List<Var> variables = new LinkedList<Var>();
         private boolean freezed = false;
         private Matrix x, min, max;
         
@@ -270,7 +270,7 @@ public class Pose3D extends NewtonLogBarrierDescent {
         double projX, projY;
         double toRad = Math.PI / 180.;
         
-        List<Segment> children = new LinkedList<>();
+        List<Segment> children = new LinkedList<Segment>();
                 
         Joint(JointType jt, VariableManager vars) {
             this.jt = jt;
@@ -333,7 +333,10 @@ public class Pose3D extends NewtonLogBarrierDescent {
                     rot = null;
                     break;
                 case M_HIP:
-                    rot = new Rotation(vars, new Var(), new Var(), new Var());
+                    vx = new Var();
+                    vy = new Var();
+                    vz = new Var();
+                    rot = new Rotation(vars, vx, vy, vz);
                     break;
                 case THORAX:
                     vx = new Var(5 * toRad, -5 * toRad, 40 * toRad);
@@ -524,8 +527,8 @@ public class Pose3D extends NewtonLogBarrierDescent {
     
     Joint root;
     
-    List<Joint> joints = new LinkedList<>();
-    List<Segment> segments = new LinkedList<>();
+    List<Joint> joints = new LinkedList<Joint>();
+    List<Segment> segments = new LinkedList<Segment>();
     VariableManager variables = new VariableManager();
     
     Var xHip = new Var();

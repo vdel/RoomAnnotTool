@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Vector;
 import javax.imageio.ImageIO;
 
@@ -52,7 +51,7 @@ public class Room {
 
     /* Object libraby */
     protected HashMap<String, ObjectManager> objectLibrary;
-    private HashMap<String, Integer > objectClasses;
+    private HashMap<String, Integer> objectClasses;
 
     /* Room corners: x and y in [0, 1] */
     public static enum CornerType { TOPLEFT, TOPRIGHT, BOTTOMRIGHT, BOTTOMLEFT, DEPTHVP, PH};
@@ -87,7 +86,7 @@ public class Room {
         
         // load library
         int nclasses = 0;
-        objectClasses = new HashMap<>();
+        objectClasses = new HashMap<String, Integer>();
         objectLibrary = ObjectManager.loadLibrary(this, file);
         
         //System.out.println(objectLibrary.size() + " objects loaded:");
@@ -319,7 +318,7 @@ public class Room {
 
     private void computeVP() {
         int horizontalVPID;
-        Vector<Line> vanishingLines = new Vector<>();
+        Vector<Line> vanishingLines = new Vector<Line>();
         
         if (isCornerVisible(CornerType.BOTTOMLEFT)) {
             pH = getCorner(CornerType.PH);
@@ -623,7 +622,7 @@ public class Room {
                 
         try {
             node = root.getChild("pointcloud");
-            cloud = new Vector<>();
+            cloud = new Vector<MyVect>();
             for (XMLNode n : node.getChildren("point")) {
                 cloud.add(n.toVect());
             }

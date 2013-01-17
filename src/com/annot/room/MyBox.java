@@ -37,7 +37,7 @@ public class MyBox {
             x = new MyVect();
             y = new MyVect();
             n = new MyVect();
-            children = new LinkedList<>();
+            children = new LinkedList<ObjectInstance>();
             
             switch (ft) {
                 case BACK:

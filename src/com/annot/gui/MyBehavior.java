@@ -142,7 +142,10 @@ public class MyBehavior extends Behavior implements MouseListener, MouseMotionLi
                 break;   
             case KeyEvent.VK_SPACE:
                  canvas.setDefaultView(room.getParams());
-                break;  
+                break; 
+            case KeyEvent.VK_C:
+                canvas.togglePointCloud();
+                break;
             default:
         }
     }

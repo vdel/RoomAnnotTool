@@ -13,7 +13,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
 /**
@@ -46,8 +45,8 @@ public class MyPanel extends javax.swing.JPanel {
         image = I;
         x0 = 0;
         y0 = 0;
-        lines = new LinkedList<>();
-        poses = new LinkedList<>();
+        lines = new LinkedList<Line>();
+        poses = new LinkedList<double[]>();
         
         // uniform for screen capture background
         if (false) {

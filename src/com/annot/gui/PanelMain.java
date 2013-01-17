@@ -89,7 +89,7 @@ public class PanelMain extends javax.swing.JFrame implements MyCanvas3DListener 
         
         jList1.removeAll();
         DefaultListModel listModel = new DefaultListModel();
-        LinkedList<String> objs = new LinkedList<>();
+        LinkedList<String> objs = new LinkedList<String>();
         for (ObjectManager om : room.getObjects()) {
             if (!om.isPrivate()) {
                 objs.add(om.getName());
