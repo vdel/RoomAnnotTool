@@ -827,7 +827,7 @@ public class Room {
                     if (f.poly.contains(x, y)) {
                         MyVect ray = params.invK.mul(image.imageToDirectCoord(new MyVect(x, y, 1)));
                         MyVect p = f.intersect(ray);
-                        if (-p.z < depth.get(x, y)) {
+                        if (p != null && -p.z < depth.get(x, y)) {
                             depth.set(x, y, -p.z);
                         }
                     }
@@ -860,7 +860,7 @@ public class Room {
                     if (f.poly.contains(x, y)) {
                         MyVect ray = params.invK.mul(image.imageToDirectCoord(new MyVect(x, y, 1)));
                         MyVect p = f.intersect(ray);
-                        if (-p.z < depth.get(x, y)) {
+                        if (p != null && -p.z < depth.get(x, y)) {
                             depth.set(x, y, -p.z);
                             Color c = new Color(f.classID, f.boxID, f.faceID);
                             labels.setRGB(x, y, c.getRGB());

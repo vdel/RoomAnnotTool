@@ -192,7 +192,9 @@ public class MyBox {
                 }
             }
             
-            ofl.add(new ObjectFace(this, p, p0, camRot.mul(getNormal())));
+            if (p0 != null) {
+                ofl.add(new ObjectFace(this, p, p0, camRot.mul(getNormal())));
+            }
         }
     }
     
