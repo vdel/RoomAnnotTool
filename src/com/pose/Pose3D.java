@@ -275,36 +275,37 @@ public class Pose3D extends NewtonLogBarrierDescent {
         Joint(JointType jt, VariableManager vars) {
             this.jt = jt;
             Var vx, vy, vz;
+            Cst _0 = new Cst();
             switch (jt) {
                 case R_ANKLE:
                     rot = null;
                     break;                
                 case R_KNEE:
-                    rot = new Rotation(vars, new Var(20 * toRad, 0, 170 * toRad), new Cst(), new Cst());
+                    rot = new Rotation(vars, new Var(20 * toRad, 0, 170 * toRad), _0, _0);
                     break;
                 case R_HIP:                    
                     vx = new Var(-20 * toRad, -170 * toRad, 0);
                     vy = new Var(-20 * toRad, -45 * toRad, 10 * toRad);
                     vz = new Var(-10 * toRad, -45 * toRad, 20 * toRad);
                     rot = new Rotation(vars, vx, vy, vz);
-                    break;    
-                case L_ANKLE:
-                    rot = null;
-                    break;                
-                case L_KNEE:
-                    rot = new Rotation(vars, new Var(20 * toRad, 0, 170 * toRad), new Cst(), new Cst());
-                    break;
+                    break;                 
                 case L_HIP:
                     vx = new Var(-20 * toRad, -170 * toRad, 0);
                     vy = new Var(20 * toRad, -10 * toRad, 45 * toRad);
                     vz = new Var(10 * toRad, -20 * toRad, 45 * toRad);
                     rot = new Rotation(vars, vx, vy, vz);
                     break;
+                case L_KNEE:
+                    rot = new Rotation(vars, new Var(20 * toRad, 0, 170 * toRad), _0, _0);
+                    break;                    
+                case L_ANKLE:
+                    rot = null;
+                    break;                                    
                 case R_WRIST:
                     rot = null;
                     break;
                 case R_ELBOW:
-                    rot = new Rotation(vars, new Cst(), new Var(10 * toRad, 0, 170 * toRad), new Cst());
+                    rot = new Rotation(vars, _0, new Var(10 * toRad, 0, 170 * toRad), _0);
                     break;
                 case R_SHOULDER:
                     vx = new Var(-10 * toRad, -100 * toRad, 10 * toRad);
@@ -312,22 +313,22 @@ public class Pose3D extends NewtonLogBarrierDescent {
                     vz = new Var(80 * toRad, -90 * toRad, 110 * toRad);
                     rot = new Rotation(vars, vx, vy, vz);
                     break;
-                case L_WRIST:
-                    rot = null;
-                    break;
-                case L_ELBOW:
-                    rot = new Rotation(vars, new Cst(), new Var(-10 * toRad, -170 * toRad, 0), new Cst());
-                    break;
                 case L_SHOULDER:
                     vx = new Var(-10 * toRad, -100 * toRad, 10 * toRad);
                     vy = new Var(0 * toRad, -135 * toRad, 20 * toRad);
                     vz = new Var(-80 * toRad, -110 * toRad, 90 * toRad);
                     rot = new Rotation(vars, vx, vy, vz);
-                    break;    
+                    break;                 
+                case L_ELBOW:
+                    rot = new Rotation(vars, _0, new Var(-10 * toRad, -170 * toRad, 0), _0);
+                    break;
+                case L_WRIST:
+                    rot = null;
+                    break;
                 case NECK:
                     vx = new Var(10 * toRad, -30 * toRad, 30 * toRad);
                     vz = new Var(-30 * toRad, 30 * toRad);
-                    rot = new Rotation(vars, vx, new Cst(), vz);
+                    rot = new Rotation(vars, vx, _0, vz);
                     break;
                 case TOP_HEAD:
                     rot = null;
@@ -338,18 +339,18 @@ public class Pose3D extends NewtonLogBarrierDescent {
                     vz = new Var();
                     rot = new Rotation(vars, vx, vy, vz);
                     break;
-                case THORAX:
-                    vx = new Var(5 * toRad, -5 * toRad, 40 * toRad);
-                    vy = new Var(-15 * toRad, 15 * toRad);
-                    vz = new Var(-15 * toRad, 15 * toRad);
-                    rot = new Rotation(vars, vx, vy, vz);
-                    break;
                 case ABDOMEN:
                     vx = new Var(5 * toRad, -5 * toRad, 40 * toRad);
                     vy = new Var(-15 * toRad, 15 * toRad);
                     vz = new Var(-15 * toRad, 15 * toRad);
                     rot = new Rotation(vars, vx, vy, vz);
                     break;
+                case THORAX:
+                    vx = new Var(5 * toRad, -5 * toRad, 40 * toRad);
+                    vy = new Var(-15 * toRad, 15 * toRad);
+                    vz = new Var(-15 * toRad, 15 * toRad);
+                    rot = new Rotation(vars, vx, vy, vz);
+                    break;                    
             }
         }
         

@@ -11,10 +11,12 @@ import com.sun.j3d.utils.universe.SimpleUniverse;
 import com.sun.j3d.utils.universe.ViewInfo;
 import com.sun.j3d.utils.universe.ViewingPlatform;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
 import java.io.File;
 import java.lang.reflect.Field;
 import javax.media.j3d.Appearance;
@@ -23,6 +25,7 @@ import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.DirectionalLight;
+import javax.media.j3d.ImageComponent2D;
 import javax.media.j3d.Material;
 import javax.media.j3d.Texture;
 import javax.media.j3d.TextureAttributes;
@@ -253,8 +256,74 @@ public class J3DHelper {
         public SimpleCanvas3D getCanvas() {
             return canvas;
         }
+        
+        public ImageWrapper screenCopy() {
+            return new ImageWrapper(canvas);
+        }
     }
-
+        
+    /**************************************************************************/
+    
+    public static class ImageWrapper {
+        public int width;
+        public int height;
+        public double[] pixels;
+        
+        private void img2array(BufferedImage img) {
+            DataBuffer buff = img.getData().getDataBuffer();
+            assert(buff.getNumBanks() == 1);
+            
+            Color color;
+            int row, col, pix;
+            pixels = new double[3 * buff.getSize()];                        
+            width = img.getWidth();
+            height = img.getHeight();
+            for (int i = 0; i < buff.getSize(); i++) {
+                color = new Color(buff.getElem(i));
+                // Matlab format
+                row = i / width;
+                col = i % width;
+                pix = col * height + row;
+                pixels[pix + 0 * buff.getSize()] = color.getRed();
+                pixels[pix + 1 * buff.getSize()] = color.getGreen();
+                pixels[pix + 2 * buff.getSize()] = color.getBlue();
+            }            
+        }
+        
+        public ImageWrapper(BufferedImage img) {
+            img2array(img);
+        }
+        
+        public ImageWrapper(FloatImage img) {
+            width = img.getWidth();
+            height = img.getHeight();
+            pixels = img.getPix();
+        }
+        
+        public ImageWrapper(Canvas3D canvas) {
+            Canvas3D coff = new Canvas3D(SimpleUniverse.getPreferredConfiguration(), true);
+            coff.getScreen3D().setSize(canvas.getScreen3D().getSize());
+            coff.getScreen3D().setPhysicalScreenWidth(
+                    canvas.getScreen3D().getPhysicalScreenWidth());
+            coff.getScreen3D().setPhysicalScreenHeight(
+                    canvas.getScreen3D().getPhysicalScreenHeight());
+            coff.setOffScreenLocation(canvas.getLocation());
+            canvas.getView().addCanvas3D(coff);
+    
+            BufferedImage img = new BufferedImage(canvas.getWidth(), 
+                                                  canvas.getHeight(), 
+                                                  BufferedImage.TYPE_INT_RGB);
+            ImageComponent2D ic = new ImageComponent2D(ImageComponent2D.FORMAT_RGB, img);
+            coff.setOffScreenBuffer(ic);
+            coff.renderOffScreenBuffer();
+            coff.waitForOffScreenRendering();
+            
+            img2array(coff.getOffScreenBuffer().getImage());
+        }
+    }
+    
+    
+    
     /**************************************************************************/
     
     static public void setupJavaPath(File pathToLib) {

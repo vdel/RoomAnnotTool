@@ -310,8 +310,9 @@ public class MyBox3D extends MyBox {
 
         MyVect trans = params.R.mul(objTrans).add(params.t);
 
-        objRot.invert();
-        MyVect obj2Cam = objRot.mul(params.cameraPosition.sub(objTrans));
+        MyMatrix invObjRot = new MyMatrix(objRot);
+        invObjRot.invert();
+        MyVect obj2Cam = invObjRot.mul(params.cameraPosition.sub(objTrans));
 
         Color c;
         c = new Color(80, 80, 80);

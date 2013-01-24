@@ -47,11 +47,11 @@ public class Pose3DVisu extends Pose3D {
                     break;
                 case L_UPPERARM:
                 case L_FOREARM:
-                    this.color = new Color3f(255, 0, 255);
+                    this.color = new Color3f(0, 255, 255);
                     break;
                 case R_UPPERARM:
                 case R_FOREARM:
-                    this.color = new Color3f(0, 255, 255);
+                    this.color = new Color3f(255, 0, 255);
                     break;
                 case L_THIGH:
                 case L_SHANK:

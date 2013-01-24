@@ -16,6 +16,7 @@ import com.annot.gui.MyCanvas3D.MyCanvas3DListener;
 import com.annot.room.ObjectManager;
 import com.annot.room.ObjectManager.ObjectException;
 import com.common.J3DHelper;
+import com.common.J3DHelper.ImageWrapper;
 import com.common.XML.XMLException;
 import com.pose.Pose3D;
 import java.io.File;

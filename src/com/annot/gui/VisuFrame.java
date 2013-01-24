@@ -5,6 +5,7 @@
 
 package com.annot.gui;
 
+import com.common.J3DHelper.ImageWrapper;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -109,5 +110,9 @@ public class VisuFrame extends Frame {
         canvas.clearPoses();
         panel.clearPoses();
         panel.repaint();
+    }
+    
+    public ImageWrapper screenCopy() {
+        return new ImageWrapper(canvas);
     }
 }

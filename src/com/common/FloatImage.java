@@ -56,6 +56,10 @@ public class FloatImage {
     public double get(int i) {
         return pix[i];
     }
+    
+    public double[] getPix() {
+        return pix;
+    }
 
     public int getWidth() {
         return w;

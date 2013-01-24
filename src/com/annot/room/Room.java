@@ -5,20 +5,30 @@
 
 package com.annot.room;
 
+import com.annot.room.ObjectInstance.ObjectFace;
 import com.annot.room.ObjectManager.FaceType;
 import com.annot.room.ObjectManager.ObjectException;
 import com.annot.room.RefineVanishingPoints.Line;
 import com.common.ClippedImage;
+import com.common.FloatImage;
+import com.common.J3DHelper.ImageWrapper;
 import com.common.MyMatrix;
 import com.common.MyVect;
 import com.common.XML;
 import com.common.XML.XMLDocument;
 import com.common.XML.XMLException;
 import com.common.XML.XMLNode;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Vector;
 import javax.imageio.ImageIO;
 
@@ -795,6 +805,109 @@ public class Room {
         roomNode.addContent(orig);
         roomNode.addContent(dims);
         return roomNode;
+    }
+    
+    // Returns a depth map in meter for camera center    
+    public ImageWrapper getDepthMap(boolean ignoreNoClass) {
+        List<ObjectFace> l = getVisibleFaces(ignoreNoClass);
+
+        int w = image.getWidth();
+        int h = image.getHeight();
+        FloatImage depth = new FloatImage(w, h);
+        for (int x = 0; x < w; ++x) {
+            for (int y = 0; y < h; ++y) {
+                depth.set(x, y, Double.POSITIVE_INFINITY);
+            }
+        }
+        
+        for (ObjectFace f : l) {
+            Rectangle r = f.poly.getBounds();
+            for (int x = Math.max(0, r.x); x < Math.min(w, r.x + r.width); ++x) {
+                for (int y = Math.max(0, r.y); y < Math.min(h, r.y + r.height); ++y) {
+                    if (f.poly.contains(x, y)) {
+                        MyVect ray = params.invK.mul(image.imageToDirectCoord(new MyVect(x, y, 1)));
+                        MyVect p = f.intersect(ray);
+                        if (-p.z < depth.get(x, y)) {
+                            depth.set(x, y, -p.z);
+                        }
+                    }
+                }
+            }
+        }
+        
+        return new ImageWrapper(depth);
+    }
+    
+    // Returns an image with R channel classID, green channel boxID, blue channel FaceID        
+    // Returns a depth map in meter for camera center    
+    public ImageWrapper getLabelMap(boolean ignoreNoClass) {
+        List<ObjectFace> l = getVisibleFaces(ignoreNoClass);
+
+        int w = image.getWidth();
+        int h = image.getHeight();
+        FloatImage depth = new FloatImage(w, h);
+        BufferedImage labels = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);        
+        for (int x = 0; x < w; ++x) {
+            for (int y = 0; y < h; ++y) {
+                depth.set(x, y, Double.POSITIVE_INFINITY);
+            }
+        }
+        
+        for (ObjectFace f : l) {
+            Rectangle r = f.poly.getBounds();
+            for (int x = Math.max(0, r.x); x < Math.min(w, r.x + r.width); ++x) {
+                for (int y = Math.max(0, r.y); y < Math.min(h, r.y + r.height); ++y) {
+                    if (f.poly.contains(x, y)) {
+                        MyVect ray = params.invK.mul(image.imageToDirectCoord(new MyVect(x, y, 1)));
+                        MyVect p = f.intersect(ray);
+                        if (-p.z < depth.get(x, y)) {
+                            depth.set(x, y, -p.z);
+                            Color c = new Color(f.classID, f.boxID, f.faceID);
+                            labels.setRGB(x, y, c.getRGB());
+                        }
+                    }
+                }
+            }
+        }
+        
+        return new ImageWrapper(labels);
+    }
+    
+    public List<ObjectFace> getVisibleFaces(boolean ignoreNoClass) {
+        List<ObjectFace> l = new LinkedList<ObjectFace>();
+        
+        getVisibleFaces(floor, l);
+        getVisibleFaces(ceiling, l);
+        for (int i = 0; i < 4; i++) {
+            getVisibleFaces(walls[i], l);
+        }
+        
+        if (ignoreNoClass) {
+            List<ObjectFace> l2 = new LinkedList<ObjectFace>();    
+            for (ObjectFace f : l) {
+                if (f.classID != -1) {
+                    l2.add(f);
+                }
+            }
+            l = l2;
+        }
+        
+        return l;
+    }   
+    
+    public void getVisibleFaces(ObjectInstance o, List<ObjectFace> l) {
+        o.getVisibleFaces(this, l);
+        
+        for (int i = 0; i < o.parts.length; i++) {
+            for (int j = 0; j < 6; j++) {
+                List<ObjectInstance> lo = o.getPart(i).getFace(FaceType.values()[j]).getChildren();                
+                for (ObjectInstance child : lo) {
+                    if (!child.isPrivate()) {
+                        getVisibleFaces(child, l);
+                    }
+                }
+            }
+        }
     }
 }
 

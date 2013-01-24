@@ -15,6 +15,7 @@ import com.common.MyMatrix;
 import com.common.MyVect;
 import com.common.XML.XMLException;
 import com.common.XML.XMLNode;
+import java.awt.Polygon;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -70,6 +71,45 @@ public class ObjectInstance {
             return new Transform(
                     MyMatrix.rotationZ(angleZ).mul(t.transl).add(transl),
                     angleZ + t.angleZ);
+        }
+    }
+    
+    public static class ObjectFace {
+        int classID;
+        int boxID;
+        int faceID;
+        Polygon poly;
+        MyVect n;
+        double b;
+        
+        ObjectFace(Face f, Polygon face, MyVect p0, MyVect normal) {
+            n = normal;
+            classID = f.parent.parent.getClassID();
+            boxID = f.parent.boxID;
+            faceID = f.getType().ordinal();
+            poly = face;
+            b = - p0.dot(n);
+        }    
+        
+        MyVect intersect(MyVect origin, MyVect ray) {
+            if (ray.dot(n) == 0) {
+                return null;
+            }
+            else {
+                double d = - (b + origin.dot(n)) / ray.dot(n);
+                return origin.add(ray.mul(d));
+            }
+        }
+        
+        // The ray comes from the origin
+        MyVect intersect(MyVect ray) {
+            if (ray.dot(n) == 0) {
+                return null;
+            }
+            else {
+                double d = - b / ray.dot(n);
+                return ray.mul(d);
+            }
         }
     }
 
@@ -401,6 +441,17 @@ public class ObjectInstance {
             bound.expand(parts[i].getBoundingBox(room, objRot, t.transl));
         }
         return bound;
+    }
+    
+    // Return visible faces in camera coordinate system: each face is a set of
+    // 4x3 3D points plus 3 integers : object ID, box ID, face ID
+    public void getVisibleFaces(Room room, List<ObjectFace> l) {
+        Transform t = getTransfromFromOrigin();        
+        MyMatrix objRot = MyMatrix.rotationZ(t.angleZ);
+  
+        for (int i = 0; i < parts.length; i++) {
+            parts[i].getVisibleFaces(room, objRot, t.transl, l);
+        }
     }
 
     public Face getAttachedFace() {

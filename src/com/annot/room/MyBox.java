@@ -5,6 +5,7 @@
 
 package com.annot.room;
 
+import com.annot.room.ObjectInstance.ObjectFace;
 import com.annot.room.ObjectManager.FaceType;
 import com.annot.room.ObjectManager.Node;
 import com.annot.room.ObjectManager.Part;
@@ -14,8 +15,11 @@ import com.common.Expression;
 import com.common.Expression.EvaluateException;
 import com.common.MyMatrix;
 import com.common.MyVect;
+import java.awt.Point;
+import java.awt.Polygon;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import javax.vecmath.Color3f;
 
 /**
@@ -127,6 +131,68 @@ public class MyBox {
 
         public HashMap<String, Double> getVariables() {
             return faceNode.getVariablesToParent();
+        }
+        
+        void addFace(List<ObjectFace> ofl, Room room, MyMatrix camRot, MyVect camTrans, MyVect dims) {
+            MyVect vx = getX().mul(Math.abs(dims.dot(getX()) / 2));
+            MyVect vy = getY().mul(Math.abs(dims.dot(getY()) / 2));
+            MyVect vz = getNormal().mul(Math.abs(dims.dot(getNormal()) / 2));
+
+            double znear = -0.001;
+            MyVect[] v = new MyVect[4];
+            v[0] = camRot.mul(vz.sub(vx).sub(vy)).add(camTrans);
+            v[1] = camRot.mul(vz.sub(vx).add(vy)).add(camTrans);
+            v[2] = camRot.mul(vz.add(vx).add(vy)).add(camTrans);
+            v[3] = camRot.mul(vz.add(vx).sub(vy)).add(camTrans);            
+            
+            Polygon p = new Polygon();
+            MyVect p0 = null;
+            // this loop may not be very effective but we have to somehow deal with face going beyond the projective plane
+            for (int i = 0; i < 4; i++) {
+                MyVect p1 = new MyVect(v[i]);
+                MyVect p2 = new MyVect(v[(i + 1) % 4]);
+
+                if (p1.z > znear && p2.z > znear) {
+                    continue;
+                }
+                else if (p1.z > znear) {
+                    MyVect v21 = p1.sub(p2);
+                    double l = (znear - p2.z) / v21.z;
+                    p1 = p2.add(v21.mul(l));
+                }
+                else if (p2.z > znear) {
+                    MyVect v12 = p2.sub(p1);
+                    double l = (znear - p1.z) / v12.z;
+                    p2 = p1.add(v12.mul(l));
+                }
+
+                if (p.npoints == 0) {
+                    p0 = new MyVect(p1);
+                }
+                
+                p1 = room.getImage().directToImageCoord(room.getParams().K.mul(p1));
+                p2 = room.getImage().directToImageCoord(room.getParams().K.mul(p2));
+                Point pp1 = p1.toPoint();
+                Point pp2 = p2.toPoint();
+                
+                if (p.npoints == 0) {
+                    p.addPoint(pp1.x, pp1.y);
+                    p.addPoint(pp2.x, pp2.y);
+                }  
+                else {
+                    if (p.xpoints[p.npoints - 1] != pp1.x ||
+                        p.ypoints[p.npoints - 1] != pp1.y) {
+                        p.addPoint(pp1.x, pp1.y);    
+                    }
+                    if (i < 3 ||
+                        p.xpoints[0] != pp2.x ||
+                        p.ypoints[0] != pp2.y) {    
+                        p.addPoint(pp2.x, pp2.y);    
+                    }
+                }
+            }
+            
+            ofl.add(new ObjectFace(this, p, p0, camRot.mul(getNormal())));
         }
     }
     
@@ -259,7 +325,8 @@ public class MyBox {
         
         MyMatrix rot = new MyMatrix(params.R);
         rot.mul(objRot);
-
+        
+        objTrans = objRot.mul(translation).add(objTrans);  
         MyVect trans = params.R.mul(objTrans).add(params.t);
 
         double znear = -0.001;
@@ -269,8 +336,8 @@ public class MyBox {
         double[] dz = new double[] {-1,-1,-1,-1, 1, 1, 1, 1};
         for (int i = 0; i < 8; i++) {  
             MyVect v = new MyVect(dimensions.x * dx[i] / 2,
-                              dimensions.y * dy[i] / 2,
-                              dimensions.z * dz[i] / 2);
+                                  dimensions.y * dy[i] / 2,
+                                  dimensions.z * dz[i] / 2);
             v = rot.mul(v).add(trans);
             
             if (v.z < znear) {
@@ -279,5 +346,24 @@ public class MyBox {
             }
         }
         return bound;
+    }
+    
+    void getVisibleFaces(Room room, MyMatrix objRot, MyVect objTrans, List<ObjectFace> l) {
+        objTrans = objRot.mul(translation).add(objTrans);  
+        
+        MyMatrix rot = new MyMatrix(room.getParams().R);
+        rot.mul(objRot);        
+        MyVect trans = room.getParams().R.mul(objTrans).add(room.getParams().t);
+        
+        MyMatrix invObjRot = new MyMatrix(objRot);
+        invObjRot.invert();
+        MyVect obj2Cam = invObjRot.mul(room.getParams().cameraPosition.sub(objTrans));
+        
+        for (int i = 0; i < 6; i++) {
+            MyVect obj2Face = faces[i].getNormal().mul(Math.abs(faces[i].getNormal().dot(getDims()) / 2));
+            if (obj2Cam.sub(obj2Face).dot(faces[i].getNormal()) >= 0) {
+                faces[i].addFace(l, room, rot, trans, getDims());
+            }
+        }
     }
 }
