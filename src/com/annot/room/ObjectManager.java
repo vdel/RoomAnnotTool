@@ -711,7 +711,7 @@ public class ObjectManager {
 
                 ceiling.checkConstraints();
 
-                ceiling.flags = PRIVATE | STATIC;
+                ceiling.flags = PRIVATE | STATIC | CEILING;
                 ceiling.className = "Ceiling";
                 library.put(ceiling.name, ceiling);
             }

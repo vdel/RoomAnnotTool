@@ -362,9 +362,14 @@ public class MyBox {
         MyVect obj2Cam = invObjRot.mul(room.getParams().cameraPosition.sub(objTrans));
         
         for (int i = 0; i < 6; i++) {
-            MyVect obj2Face = faces[i].getNormal().mul(Math.abs(faces[i].getNormal().dot(getDims()) / 2));
-            if (obj2Cam.sub(obj2Face).dot(faces[i].getNormal()) >= 0) {
-                faces[i].addFace(l, room, rot, trans, getDims());
+            if (!parent.isPrivate() || 
+                !(parent.isWall() || parent.isCeiling()) ||
+                 (parent.isWall() && i == FaceType.FRONT.ordinal()) ||
+                 (parent.isCeiling() && i == FaceType.BOTTOM.ordinal())) {                
+                MyVect obj2Face = faces[i].getNormal().mul(Math.abs(faces[i].getNormal().dot(getDims()) / 2));
+                if (obj2Cam.sub(obj2Face).dot(faces[i].getNormal()) >= 0) {
+                    faces[i].addFace(l, room, rot, trans, getDims());
+                }
             }
         }
     }

@@ -449,7 +449,7 @@ public class ObjectInstance {
         Transform t = getTransfromFromOrigin();        
         MyMatrix objRot = MyMatrix.rotationZ(t.angleZ);
   
-        for (int i = 0; i < parts.length; i++) {
+        for (int i = 0; i < parts.length; i++) {            
             parts[i].getVisibleFaces(room, objRot, t.transl, l);
         }
     }
