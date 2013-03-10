@@ -42,4 +42,11 @@ public class BBox2D {
         xmax = Math.max(xmax, p.x);
         ymax = Math.max(ymax, p.y);
     }
+    
+    public void expand(double x, double y) {
+        xmin = Math.min(xmin, x);
+        ymin = Math.min(ymin, y);
+        xmax = Math.max(xmax, x);
+        ymax = Math.max(ymax, y);
+    }
 }

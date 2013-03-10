@@ -344,7 +344,7 @@ public class MyBox {
             
             if (v.z < znear) {
                  v = params.K.mul(v);
-                 bound.expand(room.getImage().directToImageCoord(v).toPoint());
+                 bound.expand(v.x / v.z, v.y / v.z);
             }
         }
         return bound;

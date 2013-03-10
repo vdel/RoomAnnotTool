@@ -380,10 +380,10 @@ public class ObjectInstance {
             MyVect n = getAttachedFaceNormal();
             MyVect faceTrans = n.mul(parentBox.getDims().dot(n) / 2);            
             MyVect boxtrans = parentBox.getTrans();
-            t = t.mul(new Transform(boxtrans.add(faceTrans), 0));            
+            t = t.mul(new Transform(boxtrans.add(faceTrans), 0));
         }
         t = t.mul(new Transform(position, angle));
-             
+            
         return t;
     }
 
@@ -403,7 +403,7 @@ public class ObjectInstance {
     public BBox3D getBound3D() {     
         Transform t = getTransfromFromOrigin();        
         MyMatrix objRot = MyMatrix.rotationZ(t.angleZ);
-        
+                
         BBox3D bb = new BBox3D();
         for (int i = 0; i < parts.length; i++) {           
             bb.expand(parts[i].getBound3D(variables, objRot, t.transl));

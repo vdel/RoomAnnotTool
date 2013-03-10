@@ -133,7 +133,6 @@ public class MyBehavior extends Behavior implements MouseListener, MouseMotionLi
                 if (!pressed[1]) {
                     mousePressed(MouseEvent.BUTTON2, lastMousePos);
                 }
-                System.out.println(pressed[1]);
                 break;
             case KeyEvent.VK_SHIFT:                
                 if (!pressed[2]) {
