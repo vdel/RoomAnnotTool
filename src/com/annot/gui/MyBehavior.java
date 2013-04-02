@@ -10,6 +10,7 @@ import com.annot.gui.MyCanvas3D.MyPickResult;
 import com.annot.room.ObjectInstance;
 import com.annot.room.ObjectManager.FaceType;
 import com.annot.room.Room.NoSuchObjectException;
+import com.common.BBox2D;
 import com.common.J3DHelper;
 import com.common.MyMatrix;
 import com.common.MyVect;

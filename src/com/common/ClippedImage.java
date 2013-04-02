@@ -242,9 +242,8 @@ public class ClippedImage {
             int oyc = originalImage.getHeight() / 2;
             int xc = image.getWidth() / 2;
             int yc = image.getHeight() / 2;
-            double oCoordScale = 1. / Math.max(oxc, oyc);
-            double coordScale = 1. / Math.max(xc, yc);
-            double R = 1; //Math.sqrt(Math.pow(xc * coordScale, 2) + Math.pow(yc * coordScale, 2));
+            double invxc = 1. / xc;
+            double R = 1; //Math.sqrt(Math.pow(xc * invxc, 2) + Math.pow(yc * invxc, 2));
             double p = 1 / distortion;
             double q = - R / distortion;
             double delta = q * q + 4. * p * p * p / 27.;
@@ -253,18 +252,18 @@ public class ClippedImage {
             double rescale = (1 + distortion * rmax * rmax);
 
             for (int x = 0; x < img.getWidth(); x++) {
-                double xf = ((double)(x - xc)) * coordScale;
-                for (int y = 0; y < img.getHeight(); y++) {
-                    double yf = ((double)(y - yc)) * coordScale;
+                double xf = ((double)(x - xc)) * invxc;
+                for (int y = 0; y < img.getHeight(); y++) {                    
+                    double yf = ((double)(yc - y)) * invxc;
                     R = Math.sqrt(xf * xf + yf * yf);
                     q = - R / distortion;
                     delta = q * q + 4. * p * p * p / 27.;
                     double r = cbrt((-q + Math.sqrt(delta)) / 2.) +
                                cbrt((-q - Math.sqrt(delta)) / 2.);
                     double nxf = xf / (1 + distortion * r * r) * rescale;
-                    double nyf = yf / (1 + distortion * r * r) * rescale;
-                    double nx = nxf / oCoordScale + oxc;
-                    double ny = nyf / oCoordScale + oyc;
+                    double nyf = yf / (1 + distortion * r * r) * rescale;                    
+                    double nx = oxc + nxf * oxc;
+                    double ny = oyc - nyf * oxc;
                     img.setRGB(x, y, interpolatePixel(originalImage, nx, ny));
                 }
             }
@@ -297,13 +296,13 @@ public class ClippedImage {
                                   c3.getRed() * (1 - coeffx) * coeffy +
                                   c4.getRed() * coeffx * coeffy);
         int green = (int)Math.round(c1.getGreen() * (1 - coeffx) * (1 - coeffy) +
-                                  c2.getGreen() * coeffx * (1 - coeffy) +
-                                  c3.getGreen() * (1 - coeffx) * coeffy +
-                                  c4.getGreen() * coeffx * coeffy);
+                                   c2.getGreen() * coeffx * (1 - coeffy) +
+                                   c3.getGreen() * (1 - coeffx) * coeffy +
+                                   c4.getGreen() * coeffx * coeffy);
         int blue = (int)Math.round(c1.getBlue() * (1 - coeffx) * (1 - coeffy) +
-                                  c2.getBlue() * coeffx * (1 - coeffy) +
-                                  c3.getBlue() * (1 - coeffx) * coeffy +
-                                  c4.getBlue() * coeffx * coeffy);
+                                   c2.getBlue() * coeffx * (1 - coeffy) +
+                                   c3.getBlue() * (1 - coeffx) * coeffy +
+                                   c4.getBlue() * coeffx * coeffy);
         return (new Color(red, green, blue)).getRGB();
     }
 
