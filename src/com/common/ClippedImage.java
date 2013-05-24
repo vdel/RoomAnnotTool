@@ -190,15 +190,13 @@ public class ClippedImage {
     public MyVect imageToDirectCoord(MyVect v) {
         double w = getWidth() / 2.;
         double h = getHeight() / 2.;
-        double cw = getClippedWidth() / 2.;
-        return new MyVect((v.x / v.z - w) / cw, -(v.y / v.z - h) / cw, 1);            
+        return new MyVect((v.x / v.z - w) / w, -(v.y / v.z - h) / w, 1);            
     }
 
     public MyVect directToImageCoord(MyVect v) {
         double w = getWidth() / 2.;
         double h = getHeight() / 2.;
-        double cw = getClippedWidth() / 2.;
-        return new MyVect(v.x / v.z * cw + w, - v.y / v.z * cw + h, 1);
+        return new MyVect(v.x / v.z * w + w, - v.y / v.z * w + h, 1);
     }
 
     public void resize(double s) {

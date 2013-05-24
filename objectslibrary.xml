@@ -130,7 +130,7 @@
   
   
 
-  <object name="Footrest" class="CoffeeTable" nboxes="1">
+  <object name="Footrest" class="OtherObject" nboxes="1">
     <color r="255" g="170" b="0"></color>
 	<variable name="height" coefforigin="0.5">0.4</variable>
   	<variable name="width" coefforigin="0.5">0.5</variable>

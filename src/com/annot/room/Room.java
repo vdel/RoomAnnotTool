@@ -647,7 +647,7 @@ public class Room {
                 MyVect p = node.getChild("camPosition").toVect();
                 MyVect f = node.getChild("camFocal").toVect();
                 MyVect a = node.getChild("camAngle").toVect();
-                f = f.mul(1. / (image.getClippedWidth() / 2));
+                f = f.mul(1. / (image.getWidth() / 2));
                 params = new RoomParameters(image, f, a, p, p1,
                                         isCornerVisible(CornerType.BOTTOMLEFT),
                                         isCornerVisible(CornerType.BOTTOMRIGHT),

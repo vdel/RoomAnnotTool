@@ -55,20 +55,10 @@ public class VisuFrame extends Frame {
         else {
             panel = null;
         }
-      
-        JPanel pl = new JPanel();
-        pl.setBackground(Color.black);
-        pl.setPreferredSize(new Dimension(room.getImage().getXmin(), room.getImage().getClippedHeight()));
-        add(pl, BorderLayout.LINE_START);
-        
+             
         canvas = new MyCanvas3D(room, panel);
-        canvas.setPreferredSize(new Dimension(room.getImage().getClippedWidth(), room.getImage().getClippedHeight()));
+        canvas.setPreferredSize(new Dimension(room.getImage().getWidth(), room.getImage().getHeight()));
         add(canvas, BorderLayout.CENTER);
-
-        JPanel pr = new JPanel();
-        pr.setBackground(Color.black);
-        pr.setPreferredSize(new Dimension(room.getImage().getWidth() - room.getImage().getXmax() - 1, room.getImage().getClippedHeight()));
-        add(pr, BorderLayout.LINE_END);
 
         pack();
 
