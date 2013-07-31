@@ -12,6 +12,7 @@ import com.common.BBox2D;
 import com.common.BBox3D;
 import com.common.Expression;
 import com.common.MyMatrix;
+import com.common.MyPolygon;
 import com.common.MyVect;
 import com.common.XML.XMLException;
 import com.common.XML.XMLNode;
@@ -412,6 +413,19 @@ public class ObjectInstance {
         return bb;
     }
 
+    // Return bounding box of the object projected on the parent surface coordinate
+    public MyPolygon getPolygon(Room room) {  
+        Transform t = getTransfromFromOrigin();        
+        MyMatrix objRot = MyMatrix.rotationZ(t.angleZ);
+
+        MyPolygon poly = new MyPolygon();
+        for (int i = 0; i < parts.length; i++) {  
+            poly.union(parts[i].getPolygon(room, objRot, t.transl));
+        }
+
+        return poly;
+    }
+    
     // Return bounding box of the object projected on the parent surface coordinate
     public BBox2D getBound2D(HashMap<String, Double> var, MyVect pos) {        
         MyVect x = getAttachedFaceX();

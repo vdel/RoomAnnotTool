@@ -21,6 +21,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import javax.vecmath.Color3f;
+import math.geom2d.Point2D;
+import math.geom2d.polygon.Polygon2D;
+import math.geom2d.polygon.convhull.JarvisMarch2D;
 
 /**
  *
@@ -348,6 +351,37 @@ public class MyBox {
             }
         }
         return bound;
+    }
+    
+    Polygon2D getPolygon(Room room, MyMatrix objRot, MyVect objTrans) {
+        RoomParameters params = room.getParams();
+        
+        MyMatrix rot = new MyMatrix(params.R);
+        rot.mul(objRot);
+        
+        objTrans = objRot.mul(translation).add(objTrans);  
+        MyVect trans = params.R.mul(objTrans).add(params.t);
+
+        double znear = -0.001;
+        BBox2D bound = new BBox2D();
+        double[] dx = new double[] {-1, 1,-1, 1,-1, 1,-1, 1};
+        double[] dy = new double[] {-1,-1, 1, 1,-1,-1, 1, 1};
+        double[] dz = new double[] {-1,-1,-1,-1, 1, 1, 1, 1};
+        LinkedList<Point2D> points = new LinkedList<Point2D>();
+        for (int i = 0; i < 8; i++) {  
+            MyVect v = new MyVect(dimensions.x * dx[i] / 2,
+                                  dimensions.y * dy[i] / 2,
+                                  dimensions.z * dz[i] / 2);
+            v = rot.mul(v).add(trans);
+            
+            if (v.z < znear) {
+                 v = params.K.mul(v);
+                 points.add(new Point2D(v.x / v.z, v.y / v.z));
+            }
+        }
+        
+        JarvisMarch2D hull = new JarvisMarch2D();
+        return hull.convexHull(points);
     }
     
     void getVisibleFaces(Room room, MyMatrix objRot, MyVect objTrans, List<ObjectFace> l) {
