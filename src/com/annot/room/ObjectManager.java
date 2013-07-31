@@ -194,6 +194,10 @@ public class ObjectManager {
         public Node getFace(FaceType ft) {
             return faces[ft.ordinal()];
         }
+        
+        public Node getFace(int i) {
+            return faces[i];
+        }
 
         public int getBoxID() {
             return boxID;
@@ -333,7 +337,7 @@ public class ObjectManager {
 
     Node[] roots;
     String name;
-    String className;
+    String className;    
     int classID;
     Vector<Part> parts;
     VarMap variables;
@@ -537,7 +541,7 @@ public class ObjectManager {
     public boolean isCeiling() {
         return (flags & CEILING) != 0;
     }
-
+    
     /**************************************************************************/
 
     final void checkConstraints() throws ObjectException {

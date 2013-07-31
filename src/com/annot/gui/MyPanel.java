@@ -173,7 +173,8 @@ public class MyPanel extends javax.swing.JPanel {
             MyVect p = new MyVect(pose[3 * i + 0], pose[3 * i + 1], pose[3 * i + 2]);
             p = R.mul(p).add(t);
             pose2D[3 * i + 2] = p.z;
-            Point coord = F.mul(p).toPoint();
+            p = F.mul(p);
+            Point coord =  new Point((int)Math.round(p.x * image.getWidth() / (2 * p.z)), (int)Math.round(p.y * image.getWidth() / (2 * p.z)));
             pose2D[3 * i + 0] = image.getWidth() / 2 + coord.x;
             pose2D[3 * i + 1] = image.getHeight() / 2 - coord.y;
         }

@@ -7,10 +7,9 @@ package com.annot.gui;
 
 import com.common.J3DHelper.ImageWrapper;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
-import javax.swing.JPanel;
+import javax.media.j3d.Canvas3D;
 
 /**
  *
@@ -55,20 +54,10 @@ public class VisuFrame extends Frame {
         else {
             panel = null;
         }
-      
-        JPanel pl = new JPanel();
-        pl.setBackground(Color.black);
-        pl.setPreferredSize(new Dimension(room.getImage().getXmin(), room.getImage().getClippedHeight()));
-        add(pl, BorderLayout.LINE_START);
-        
+             
         canvas = new MyCanvas3D(room, panel);
-        canvas.setPreferredSize(new Dimension(room.getImage().getClippedWidth(), room.getImage().getClippedHeight()));
+        canvas.setPreferredSize(new Dimension(room.getImage().getWidth(), room.getImage().getHeight()));
         add(canvas, BorderLayout.CENTER);
-
-        JPanel pr = new JPanel();
-        pr.setBackground(Color.black);
-        pr.setPreferredSize(new Dimension(room.getImage().getWidth() - room.getImage().getXmax() - 1, room.getImage().getClippedHeight()));
-        add(pr, BorderLayout.LINE_END);
 
         pack();
 
@@ -101,18 +90,26 @@ public class VisuFrame extends Frame {
     }
 
     public void addPose(double[] pose) {
-        canvas.addPose(pose);
-        panel.addPose(pose, room.getParams().K, room.getParams().R, room.getParams().t);
-        panel.repaint();
+        canvas.addPose(pose);        
+        if (panel != null) {
+            panel.addPose(pose, room.getParams().K, room.getParams().R, room.getParams().t);
+            panel.repaint();
+        }
     }
 
     public void clearPoses() {
         canvas.clearPoses();
-        panel.clearPoses();
-        panel.repaint();
+        if (panel != null) {
+            panel.clearPoses();
+            panel.repaint();
+        }
     }
     
     public ImageWrapper screenCopy() {
-        return new ImageWrapper(canvas);
+        Canvas3D offscreen = canvas.getOffscrenCanvas();
+        canvas.getView().addCanvas3D(offscreen);
+        ImageWrapper iw = new ImageWrapper(offscreen);
+        canvas.getView().removeCanvas3D(offscreen);
+        return iw;
     }
 }

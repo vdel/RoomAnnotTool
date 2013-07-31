@@ -4,6 +4,7 @@
  */
 package com.common;
 
+import com.annot.gui.MyCanvas3D;
 import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
 import com.sun.j3d.utils.behaviors.vp.ViewPlatformBehavior;
 import com.sun.j3d.utils.image.TextureLoader;
@@ -256,10 +257,6 @@ public class J3DHelper {
         public SimpleCanvas3D getCanvas() {
             return canvas;
         }
-        
-        public ImageWrapper screenCopy() {
-            return new ImageWrapper(canvas);
-        }
     }
         
     /**************************************************************************/
@@ -300,25 +297,17 @@ public class J3DHelper {
             pixels = img.getPix();
         }
         
-        public ImageWrapper(Canvas3D canvas) {
-            Canvas3D coff = new Canvas3D(SimpleUniverse.getPreferredConfiguration(), true);
-            coff.getScreen3D().setSize(canvas.getScreen3D().getSize());
-            coff.getScreen3D().setPhysicalScreenWidth(
-                    canvas.getScreen3D().getPhysicalScreenWidth());
-            coff.getScreen3D().setPhysicalScreenHeight(
-                    canvas.getScreen3D().getPhysicalScreenHeight());
-            coff.setOffScreenLocation(canvas.getLocation());
-            canvas.getView().addCanvas3D(coff);
-    
-            BufferedImage img = new BufferedImage(canvas.getWidth(), 
-                                                  canvas.getHeight(), 
+        public ImageWrapper(Canvas3D offscreen) {
+            BufferedImage img = new BufferedImage(offscreen.getSize().width, 
+                                                  offscreen.getSize().height, 
                                                   BufferedImage.TYPE_INT_RGB);
             ImageComponent2D ic = new ImageComponent2D(ImageComponent2D.FORMAT_RGB, img);
-            coff.setOffScreenBuffer(ic);
-            coff.renderOffScreenBuffer();
-            coff.waitForOffScreenRendering();
+           
+            offscreen.setOffScreenBuffer(ic);
+            offscreen.renderOffScreenBuffer();
+            offscreen.waitForOffScreenRendering();                                
             
-            img2array(coff.getOffScreenBuffer().getImage());
+            img2array(offscreen.getOffScreenBuffer().getImage());
         }
     }
     

@@ -193,10 +193,10 @@ public class Room {
 
     /**************************************************************************/
 
-    void loadImage(File file) throws IOException, XMLException {
+    public void loadImage(File file) throws IOException, XMLException {
         hasImage = true;
         fileName = file.getName();
-
+        
         image = new ClippedImage(ImageIO.read(file));
 
         if (image.getWidth() > maximumSize) {
@@ -205,7 +205,7 @@ public class Room {
         }
         else {
            scale = 1;
-        }
+        }        
     }
 
     /**************************************************************************/
@@ -291,6 +291,10 @@ public class Room {
         return new MyVect(corners[i].x * w, corners[i].y * h, 1);
     }
 
+    public MyVect getCornerImage(int ct) {
+        return getCornerImage(CornerType.values()[ct]);
+    }
+    
     /**************************************************************************/
 
     private MyVect getCorner(CornerType ct) {
@@ -299,7 +303,7 @@ public class Room {
         int i = ct.ordinal();
         return image.imageToDirectCoord(new MyVect(corners[i].x * w, corners[i].y * h, 1));
     }
-
+    
     /**************************************************************************/
 
     public boolean isSetCorners() {
@@ -540,16 +544,42 @@ public class Room {
     }
 
     /**************************************************************************/
-
-    public void loadEmptyRoom(double depth, double width, double height) {
+    
+    public void loadEmptyRoom(double depth, double width, double height, double posX, double posY, double posZ) {
         hasImage = false;
         image = new ClippedImage(maximumSize, maximumSize * 2 / 3);
-        MyVect f = new MyVect(400, 400, 0);
-        MyVect a = new MyVect(-Math.PI / 2, 0, 0);
-        MyVect p = new MyVect(depth / 2, width / 2, 9);
+        MyVect f = new MyVect(1.3, 1.3, 0);        
+        MyVect p = new MyVect(posX, posY, posZ);
+        MyVect a = new MyVect();
+        
+        MyVect dir = new MyVect(depth / 2, width / 2, 1.5).sub(p);
+        MyVect top = new MyVect(0, 0, 1);
+            
+        a.z = -Math.atan2(dir.y, dir.x);
+        MyMatrix rot = MyMatrix.rotationZ(a.z);
+        dir = rot.mul(dir);
+        a.y = -Math.atan2(-dir.x, -dir.z);
+        rot = MyMatrix.rotationY(a.y);
+        top = rot.mul(top);
+        
+        if (top.x == 0 && top.y == 0) {
+            a.x = -Math.PI / 2;
+        }
+        else {
+            a.x = -Math.atan2(-top.x, top.y);
+        }
+   
         params = new RoomParameters(image, f, a, p, depth, width, height);
 
+        build();
+        
         displayRoomParameters();
+    }
+    
+    /**************************************************************************/
+
+    public void loadEmptyRoom(double depth, double width, double height) {
+        loadEmptyRoom(depth, width, height, depth, width / 2, 1.5);
     }
 
     /**************************************************************************/
@@ -647,7 +677,7 @@ public class Room {
                 MyVect p = node.getChild("camPosition").toVect();
                 MyVect f = node.getChild("camFocal").toVect();
                 MyVect a = node.getChild("camAngle").toVect();
-                f = f.mul(1. / (image.getClippedWidth() / 2));
+                f = f.mul(1. / (image.getWidth() / 2));
                 params = new RoomParameters(image, f, a, p, p1,
                                         isCornerVisible(CornerType.BOTTOMLEFT),
                                         isCornerVisible(CornerType.BOTTOMRIGHT),
@@ -666,6 +696,7 @@ public class Room {
                 params = new RoomParameters(image, K, R, t, cloud, defaultHeight);
             }
             catch (XMLException e2) {
+                System.out.println("Excep:" + e2.toString());
                 return;
             }
         }
@@ -757,7 +788,7 @@ public class Room {
         
         if (isSetParams()) {
             System.out.println("Geometry saved.");
-            XMLNode paramsNode = new XMLNode("params");                                                            
+            XMLNode paramsNode = new XMLNode("camParams");                                                            
             paramsNode.addContent(XMLNode.fromMatrix("K", params.K));
             paramsNode.addContent(XMLNode.fromMatrix("R", params.R));
             paramsNode.addContent(XMLNode.fromVect("t", params.t));
@@ -807,10 +838,12 @@ public class Room {
         return roomNode;
     }
     
-    // Returns a depth map in meter for camera center    
+    // Returns a depth map in meter for camera center   
     public ImageWrapper getDepthMap(boolean ignoreNoClass) {
-        List<ObjectFace> l = getVisibleFaces(ignoreNoClass);
-
+        return getDepthMap(getVisibleFaces(ignoreNoClass));
+    }
+            
+    public ImageWrapper getDepthMap(List<ObjectFace> l) {
         int w = image.getWidth();
         int h = image.getHeight();
         FloatImage depth = new FloatImage(w, h);
@@ -841,8 +874,10 @@ public class Room {
     // Returns an image with R channel classID, green channel boxID, blue channel FaceID        
     // Returns a depth map in meter for camera center    
     public ImageWrapper getLabelMap(boolean ignoreNoClass) {
-        List<ObjectFace> l = getVisibleFaces(ignoreNoClass);
-
+        return getLabelMap(getVisibleFaces(ignoreNoClass));
+    }
+    
+    public ImageWrapper getLabelMap(List<ObjectFace> l) {
         int w = image.getWidth();
         int h = image.getHeight();
         FloatImage depth = new FloatImage(w, h);
@@ -873,6 +908,36 @@ public class Room {
         return new ImageWrapper(labels);
     }
     
+    // Return point of intersection between the room and the ray issued from 
+    // (x, y) direct image coordinates (in room 3D coordinate)
+    public MyVect getInstersection(boolean ignoreNoClass, double x, double y) {
+        return getInstersection(x, y, getVisibleFaces(ignoreNoClass)); 
+    }
+    
+    public MyVect getInstersection(double x, double y, List<ObjectFace> l) {
+        MyVect inter = null;
+        
+        MyVect point = new MyVect(x, y, 1);
+        MyVect c = image.directToImageCoord(point);
+ 
+        for (ObjectFace f : l) {
+            if (f.poly.contains(c.x, c.y)) {
+                MyVect ray = params.invK.mul(point);
+                MyVect p = f.intersect(ray);
+                if (p != null && (inter == null || p.z > inter.z)) {                    
+                    inter = p;
+                }
+            }            
+        }
+        
+        if (inter != null) {
+            return params.invR.mul(inter.sub(params.t));            
+        }
+        else {
+            return new MyVect();
+        }
+    }
+    
     public List<ObjectFace> getVisibleFaces(boolean ignoreNoClass) {
         List<ObjectFace> l = new LinkedList<ObjectFace>();
         
@@ -895,7 +960,7 @@ public class Room {
         return l;
     }   
     
-    public void getVisibleFaces(ObjectInstance o, List<ObjectFace> l) {
+    private void getVisibleFaces(ObjectInstance o, List<ObjectFace> l) {
         o.getVisibleFaces(this, l);
         
         for (int i = 0; i < o.parts.length; i++) {

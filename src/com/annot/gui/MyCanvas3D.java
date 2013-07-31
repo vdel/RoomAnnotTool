@@ -79,6 +79,7 @@ public class MyCanvas3D extends Canvas3D implements DropTargetListener {
     private ConstrainedMotion motion;
     private LinkedList<MyCanvas3DListener> listeners;
     private LinkedList<BranchGroup> poses;
+    private Canvas3D offscreen;
 
     static public class MyPickResult {
 
@@ -93,11 +94,12 @@ public class MyCanvas3D extends Canvas3D implements DropTargetListener {
         static MyPickResult pick(PickCanvas pc, ObjectInstance3D currentObject, int x, int y) {
             try {
                 pc.setShapeLocation(x, y);
-                PickResult[] result = pc.pickAllSorted();
+                PickResult[] result = pc.pickAllSorted();                                
 
                 if (result != null) {
                     for (int i = 0; i < result.length; i++) {
                         Node n = result[i].getNode(PickResult.PRIMITIVE);
+                        
                         if (n.getClass().isAssignableFrom(J3DBox.class)) {
                             MyBox3D b = ((J3DBox)n).me;
                             Shape3D s = (Shape3D) result[i].getNode(PickResult.SHAPE3D);
@@ -173,11 +175,14 @@ public class MyCanvas3D extends Canvas3D implements DropTargetListener {
         cloudVisible = true;
         
         // Attach to universe
-        universe.addBranchGraph(rootGroup);        
+        universe.addBranchGraph(rootGroup);    
+        
+        // Add offscreen canvas for rendering
+        offscreen = new Canvas3D(SimpleUniverse.getPreferredConfiguration(), true);                
     }
 
     public void close() {
-        super.stopRenderer();
+        super.stopRenderer();        
         behavior.clear();
         universe.getViewingPlatform().detach();
         rootGroup.detach();
@@ -202,6 +207,18 @@ public class MyCanvas3D extends Canvas3D implements DropTargetListener {
 
         universe.cleanup();
         universe = null;
+    }
+    
+    public Canvas3D getOffscrenCanvas() {
+        offscreen.getScreen3D().setSize(getScreen3D().getSize());
+        offscreen.getScreen3D().setPhysicalScreenWidth(
+                  getScreen3D().getPhysicalScreenWidth());
+        offscreen.getScreen3D().setPhysicalScreenHeight(
+                  getScreen3D().getPhysicalScreenHeight());
+        offscreen.setOffScreenLocation(getLocation());
+        offscreen.setSize(getWidth(), getHeight());
+                
+        return offscreen;
     }
 
     private void createUniverse() {

@@ -7,10 +7,13 @@ package com.annot.room;
 
 import com.annot.room.MyBox.Face;
 import com.annot.room.ObjectManager.FaceType;
+import com.annot.room.ObjectManager.Node;
 import com.annot.room.Room.NoSuchObjectException;
 import com.common.BBox2D;
 import com.common.BBox3D;
 import com.common.Expression;
+import com.common.Expression.EvaluateException;
+import com.common.Expression.ParseException;
 import com.common.MyMatrix;
 import com.common.MyVect;
 import com.common.XML.XMLException;
@@ -20,6 +23,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.vecmath.Color3f;
 
 /**
@@ -170,6 +175,43 @@ public class ObjectInstance {
             parts[i].variableUpdated();
         }
     }
+    
+    public void rescale(double[] coeff) {
+        assert(coeff.length == 1 || coeff.length == 3);
+        
+        int[][] fID = {{FaceType.FRONT.ordinal(), FaceType.BACK.ordinal()}, 
+                       {FaceType.LEFT.ordinal(), FaceType.RIGHT.ordinal()}, 
+                       {FaceType.TOP.ordinal(), FaceType.BOTTOM.ordinal()}};
+        
+        for (int k = 0; k < 3; k++) {    
+            List<String> vars = new LinkedList<String>();
+            
+            for (int i = 0; i < parts.length; i++) {
+                for (int j = 0; j < fID[k].length; j++) {
+                    Node n = objm.parts.get(i).getFace(fID[k][j]);
+                                        
+                    try {
+                        HashMap<String, Double> var = n.getPosition().getVariables();
+                        for (String v : var.keySet()) {
+                            if (!vars.contains(v)) {
+                                vars.add(v);
+                            }
+                        }
+                    } catch (Exception ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+            
+            try {
+                for (String var : vars) {
+                    setVariable(var, coeff[coeff.length == 1 ? 0 : k] * getVariable(var));
+                }
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    }    
 
     public HashMap<String, Double> getVariables() {
         return (HashMap<String, Double>)variables.clone();
@@ -222,6 +264,10 @@ public class ObjectInstance {
         for (int i = 0; i < parts.length; i++) {
             getPart(i).setColor(color);
         }
+    }
+    
+    public void setColor(double r, double g, double b) {
+        setColor(new Color3f((float)r, (float)g, (float)b));
     }
 
     void addChild(MyBox p, FaceType ft, ObjectInstance child) {
