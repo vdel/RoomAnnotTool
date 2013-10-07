@@ -15,6 +15,7 @@ import com.common.Expression;
 import com.common.Expression.EvaluateException;
 import com.common.Expression.ParseException;
 import com.common.MyMatrix;
+import com.common.MyPolygon;
 import com.common.MyVect;
 import com.common.XML.XMLException;
 import com.common.XML.XMLNode;
@@ -235,16 +236,25 @@ public class ObjectInstance {
         }
     }    
 
-    public void clear() {
-        parentBox = null;
+    public void clearChildren() {        
+        for (Link l : children) {
+            if (!l.child.isPrivate()) {
+                l.child.clear();
+            }
+        }
+        children.clear();    
+    }
+    
+    public void clear() {        
         for (Link l : children) {
             l.child.clear();
         }
         children.clear();        
         for (int i = 0; i < parts.length; i++) {
             parts[i].clear();
-        }
+        }        
         parts = null;
+        parentBox = null;
     }
     
     public double[] getColor() {
@@ -458,6 +468,19 @@ public class ObjectInstance {
         return bb;
     }
 
+    // Return bounding box of the object projected on the parent surface coordinate
+    public MyPolygon getPolygon(Room room) {  
+        Transform t = getTransfromFromOrigin();        
+        MyMatrix objRot = MyMatrix.rotationZ(t.angleZ);
+
+        MyPolygon poly = new MyPolygon();
+        for (int i = 0; i < parts.length; i++) {  
+            poly.union(parts[i].getPolygon(room, objRot, t.transl));
+        }
+
+        return poly;
+    }
+    
     // Return bounding box of the object projected on the parent surface coordinate
     public BBox2D getBound2D(HashMap<String, Double> var, MyVect pos) {        
         MyVect x = getAttachedFaceX();

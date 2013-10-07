@@ -459,7 +459,7 @@ public class MyBehavior extends Behavior implements MouseListener, MouseMotionLi
         applyTransform();
     }
 
-    void setCameraPos(MyVect pos) {
+    public void setCameraPos(MyVect pos) {
         MyVect offset = new MyVect(room.getParams().depth / 2, room.getParams().width / 2, 0);
         setTranslation(getR().mul(offset.sub(pos)));
         applyTransform();

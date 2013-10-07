@@ -192,6 +192,16 @@ public class Room {
     }
 
     /**************************************************************************/
+    
+    public void clearObjects() {
+        floor.clearChildren();
+        ceiling.clearChildren();
+        for (int i = 0; i < 4; ++i) {
+            walls[i].clearChildren();
+        }
+    }
+    
+    /**************************************************************************/
 
     public void loadImage(File file) throws IOException, XMLException {
         hasImage = true;

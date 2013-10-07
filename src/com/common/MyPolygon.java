@@ -4,180 +4,77 @@
  */
 package com.common;
 
-import java.awt.Point;
-import java.awt.Polygon;
-import java.util.LinkedList;
+import math.geom2d.polygon.Polygon2D;
+import math.geom2d.polygon.Polygons2D;
+import math.geom2d.polygon.SimplePolygon2D;
 
 /**
  *
  * @author vdelaitr
  */
 public class MyPolygon {
-    LinkedList<Polygon> polys;
+    Polygon2D poly;
     
-    class EdgeCut {
-        double dist;
-        int edgeID;
-        
-        EdgeCut() {
-            edgeID = -1;
-        }
-        
-        EdgeCut(double dist, int edgeID) {
-            this.dist = dist;
-            this.edgeID = edgeID;
-        }
-    }
-            
     public MyPolygon() {        
+       poly = new SimplePolygon2D();
     }
     
-    public void addPolygon(Polygon poly) {
-        if (getSignedArea(poly) < 0) { // we make it counter clockwise
-            Polygon ccw = new Polygon();
-            for (int i = poly.npoints - 1; i >= 0; i--) {
-                ccw.addPoint(poly.xpoints[i], poly.ypoints[i]);
-            }
-            poly = ccw;
-        }
-        
-        polys.add(poly);
+    // From any vertices
+    public MyPolygon(double[] xcoords, double[] ycoords) {
+        poly = new SimplePolygon2D(xcoords, ycoords);
     }
     
-    private double getSignedArea(Polygon poly) { // positive if counter clockwise
-        double a = 0;
-        for (int i = 0; i < poly.npoints; i++) {
-            a += poly.xpoints[i] * poly.ypoints[(i + 1) % poly.npoints] - 
-                 poly.xpoints[(i + 1) % poly.npoints] * poly.ypoints[i];            
+    // From rectangle
+    public MyPolygon(double[] center, double[] dims, double angle) {
+        double[] xcoords = new double[4];
+        double[] ycoords = new double[4];
+        
+        double c = Math.cos(angle);
+        double s = Math.sin(angle);
+        double w = dims[0] / 2;
+        double h = dims[1] / 2;
+        
+        double[] du = {1., -1., -1., 1.}; 
+        double[] dv = {1., 1., -1., -1.};
+        
+        for (int i = 0; i < 4; ++i) {
+            double dx = du[i] * w;
+            double dy = dv[i] * h;
+            xcoords[i] = center[0] + dx * c - dy * s;
+            ycoords[i] = center[1] + dx * s + dy * c;
         }
-        return a / 2.;
+        
+        poly = new SimplePolygon2D(xcoords, ycoords);
     }
     
-    public void union(MyPolygon p) {
-        for (Polygon poly : p.polys) {
-            union(poly);
-        }
+    public double area() {
+        return Math.abs(poly.area());
     }
     
-    private void union(Polygon a) {  // holes are not handled
-        for(int i = 0; i < polys.size(); i++) {
-            Polygon u = new Polygon();
-            Polygon b = polys.get(i);
-            int status = union(a, b, u);
-            // status == 0: no intersection
-            if (status == 1) {  // a inside b
-                return;
-            }
-            else if (status == 2) {  // b inside a
-                polys.remove(i);
-                i--;
-            }
-            else if (status == 3) { // u gets union of a and b
-                polys.remove(i);
-                i--;
-                a = u;
-            }
-        }
-        polys.add(a);
+    public MyPolygon intersection(Polygon2D p) {
+        poly = Polygons2D.intersection(poly, p);
+        return this;
     }
     
-    private int union(Polygon a, Polygon b, Polygon u) {
-        Polygon[] p = new Polygon[2];
-        p[0] = a;
-        p[1] = b;
-        
-        boolean[][] inside = new boolean[2][];
-        inside[0] = findInside(a, b);
-        inside[1] = findInside(b, a);
-        
-        int nInsideB = countInside(inside[0]);
-        int nInsideA = countInside(inside[1]);
-        if (nInsideA == 0 && nInsideB == 0) {
-            return 0;            
-        }
-        else if(nInsideB == a.npoints) {
-            return 1;
-        }
-        else if(nInsideA == b.npoints) {
-            return 2;
-        }
-        
-        EdgeCut[][] edges = new EdgeCut[2][];
-        edges[0] = new EdgeCut[a.npoints];
-        edges[1] = new EdgeCut[b.npoints];
-        setCut(a, b, inside[0], edges[0], edges[1]);
-        setCut(b, a, inside[1], edges[1], edges[0]);
-               
-        int currpoly0, currpoint0;
-        int leftA = leftMostPoint(a);
-        int leftB = leftMostPoint(b);
-        if (a.xpoints[leftA] < b.xpoints[leftB]) {
-            currpoly0 = 0;
-            currpoint0 = leftA;            
-        }
-        else {
-            currpoly0 = 1;
-            currpoint0 = leftB;
-        }
-        
-        int currpoly = currpoly0;
-        int currpoint = currpoint0;                
-        while (!inside[currpoly][currpoint]) {
-            u.addPoint(p[currpoly].xpoints[currpoint], p[currpoly].ypoints[currpoint]);
-            currpoint = (currpoint + 1) % p[currpoly].npoints;
-            if (currpoly == currpoly0 && currpoint == currpoint0) {
-                break;
-            }
-        }
-        int prev = (currpoint - 1 + a.npoints) % a.npoints;
-        Point p = intersect(a.xpoints[prev], 
-                            a.ypoints[prev], 
-                            a.xpoints[currpoint] - a.xpoints[prev],
-                            a.ypoints[currpoint] - a.ypoints[prev])
-        
-        
-        return 3;
+    public MyPolygon union(Polygon2D p) {
+        poly = Polygons2D.union(poly, p);
+        return this;
     }
     
-    private boolean[] findInside(Polygon a, Polygon b) {
-        boolean[] isInside = new boolean[a.npoints];
-        
-        for (int i = 0; i < a.npoints; i++) {
-            isInside[i] = b.contains(a.xpoints[i], a.ypoints[i]);
-        }
-        
-        return isInside;
+   public MyPolygon intersection(MyPolygon p) {
+        return intersection(p.poly);
     }
     
-    private int countInside(boolean[] isInside) {
-        int count = 0;
-        for (int i = 0; i < isInside.length; i++) {
-            if (isInside[i]) {
-                count++;
-            }
-        }
-        return count;
+    public MyPolygon union(MyPolygon p) {
+        return union(p.poly);        
     }
     
-    private int leftMostPoint(Polygon a) {
-        int i = 0;
-        for (int j = 1; j < a.npoints; j++) {
-            if (a.xpoints[j] < a.xpoints[i]) {
-                i = j;
-            }
+    public double[] toArray() {
+        double[] p = new double[2 * poly.vertexNumber()];
+        for (int i = 0; i < poly.vertexNumber(); i++) {
+            p[2 * i]     = poly.vertex(i).x();
+            p[2 * i + 1] = poly.vertex(i).y();
         }
-        return i;
-    }
-    
-    private void setCut(Polygon a, Polygon b, boolean[] insideB, EdgeCut[] edgeA, EdgeCut[] edgeB) {
-        for (int i = 0; i < a.npoints; i++) {
-            int next = (i + 1) % a.npoints;
-            if (!insideB[i] & insideB[next]) {
-                
-            }
-            else if(insideB[i] & !insideB[next]) {
-                
-            }
-        }
+        return p;
     }
 }
