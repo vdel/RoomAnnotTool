@@ -274,6 +274,18 @@ public class Room {
     public Vector<MyVect> getCloud() {
         return cloud;
     }
+    
+    public MyVect getCorner(int i) {
+        return getCornerImage(Room.CornerType.values()[i]);
+    }
+    
+    public boolean isCornerVisible(int i) {
+        return isCornerVisible(Room.CornerType.values()[i]);
+    }
+    
+    public MyVect getVP(int i) {
+        return vp[i];
+    }
 
     /**************************************************************************/
     
