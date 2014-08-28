@@ -84,6 +84,7 @@ public class ObjectInstance {
         int classID;
         int boxID;
         int faceID;
+        int flag; // 1 - Floor, 2 - Wall, 4 - Ceiling
         Polygon poly;
         MyVect n;
         double b;
@@ -91,6 +92,9 @@ public class ObjectInstance {
         ObjectFace(Face f, Polygon face, MyVect p0, MyVect normal) {
             n = normal;
             classID = f.parent.parent.getClassID();
+            flag = (f.parent.parent.objm.isFloor()   ? 1 : 0) + 
+                   (f.parent.parent.objm.isWall()    ? 2 : 0) +
+                   (f.parent.parent.objm.isCeiling() ? 4 : 0); 
             boxID = f.parent.boxID;
             faceID = f.getType().ordinal();
             poly = face;

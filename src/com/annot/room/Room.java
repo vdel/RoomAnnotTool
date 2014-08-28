@@ -152,6 +152,8 @@ public class Room {
     public void load(File img, File annots) throws IOException, XMLException {
         loadImage(img);
         loadAnnots(annots);
+        
+        getLayoutMap(true);
     }
 
     /**************************************************************************/
@@ -865,6 +867,7 @@ public class Room {
         return getDepthMap(getVisibleFaces(ignoreNoClass));
     }
             
+    // Returns a depth map in meter for camera center    
     public ImageWrapper getDepthMap(List<ObjectFace> l) {
         int w = image.getWidth();
         int h = image.getHeight();
@@ -894,7 +897,6 @@ public class Room {
     }
     
     // Returns an image with R channel classID, green channel boxID, blue channel FaceID        
-    // Returns a depth map in meter for camera center    
     public ImageWrapper getLabelMap(boolean ignoreNoClass) {
         return getLabelMap(getVisibleFaces(ignoreNoClass));
     }
@@ -912,15 +914,15 @@ public class Room {
         
         for (ObjectFace f : l) {
             Rectangle r = f.poly.getBounds();
+            int c = new Color(f.classID, f.boxID, f.faceID).getRGB();
             for (int x = Math.max(0, r.x); x < Math.min(w, r.x + r.width); ++x) {
                 for (int y = Math.max(0, r.y); y < Math.min(h, r.y + r.height); ++y) {
                     if (f.poly.contains(x, y)) {
                         MyVect ray = params.invK.mul(image.imageToDirectCoord(new MyVect(x, y, 1)));
                         MyVect p = f.intersect(ray);
                         if (p != null && -p.z < depth.get(x, y)) {
-                            depth.set(x, y, -p.z);
-                            Color c = new Color(f.classID, f.boxID, f.faceID);
-                            labels.setRGB(x, y, c.getRGB());
+                            depth.set(x, y, -p.z);                            
+                            labels.setRGB(x, y, c);
                         }
                     }
                 }
@@ -928,6 +930,85 @@ public class Room {
         }
         
         return new ImageWrapper(labels);
+    }
+    
+    // Returns an image with R channel layoutID, green channel isClutter
+    public ImageWrapper getLayoutMap(boolean ignoreNoClass) {
+        return getLayoutMap(getVisibleFaces(ignoreNoClass));
+    }
+    
+    public ImageWrapper getLayoutMap(List<ObjectFace> l) {
+        int w = image.getWidth();
+        int h = image.getHeight();
+        
+        FloatImage depth_layout = new FloatImage(w, h);
+        FloatImage depth_clutter = new FloatImage(w, h);
+        BufferedImage layout = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);        
+        for (int x = 0; x < w; ++x) {
+            for (int y = 0; y < h; ++y) {
+                depth_layout.set(x, y, Double.POSITIVE_INFINITY);
+                depth_clutter.set(x, y, Double.POSITIVE_INFINITY);
+            }
+        }
+        
+        
+        for (ObjectFace f : l) {
+            Rectangle r = f.poly.getBounds();
+            boolean isClutter = f.flag == 0;
+            int layoutID = 0;
+            if (!isClutter) {                
+                if ((f.flag & 1) != 0) { // Floor
+                    layoutID = 1;
+                }
+                else if ((f.flag & 2) != 0) { // Wall
+                    // 2 => Center, 3 => Right Wall, 4 => Left Wall
+                    double a = Math.toDegrees(Math.atan2(f.n.x, f.n.z));
+                    if (-45. < a && a <= 45.) {
+                        layoutID = 2;  // Front Wall
+                    } 
+                    else if (45. < a && a <= 135.) {
+                        layoutID = 4;  // Left Wall
+                    }
+                    else if (-135. < a && a <= -45) {
+                        layoutID = 3;  // Right Wall
+                    }
+                    else {
+                        layoutID = 6;
+                    }
+                }
+                else { // Ceiling
+                    layoutID = 5;
+                }                
+                assert(layoutID != 0);
+            }
+            
+            for (int x = Math.max(0, r.x); x < Math.min(w, r.x + r.width); ++x) {
+                for (int y = Math.max(0, r.y); y < Math.min(h, r.y + r.height); ++y) {
+                    if (f.poly.contains(x, y)) {
+                        MyVect ray = params.invK.mul(image.imageToDirectCoord(new MyVect(x, y, 1)));
+                        MyVect p = f.intersect(ray);
+                        if (p != null) {
+                            Color cprev = new Color(layout.getRGB(x, y));
+                            if (isClutter) {                                
+                                if (-p.z < depth_clutter.get(x, y)) {
+                                    depth_clutter.set(x, y, -p.z);
+                                    layout.setRGB(x, y, new Color(cprev.getRed(), 1, f.classID).getRGB());
+                                }                                
+                            }
+                            else {                                
+                                if (-p.z < depth_layout.get(x, y)) {
+                                    depth_layout.set(x, y, -p.z);
+                                    layout.setRGB(x, y, new Color(layoutID, cprev.getGreen(), cprev.getBlue()).getRGB());
+                                }
+                            }
+                            
+                        }
+                    }
+                }
+            }
+        }
+        
+        return new ImageWrapper(layout);
     }
     
     // Return point of intersection between the room and the ray issued from 
