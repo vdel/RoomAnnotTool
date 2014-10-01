@@ -156,7 +156,7 @@
 
   
   
-  <object name="Sofa" class="Sofa" nboxes="4">
+  <object name="Sofa" class="SofaArmchair" nboxes="4">
     <color r="255" g="0" b="0"></color>
 	<variable name="height" coefforigin="0">0.3</variable>
   	<variable name="width" coefforigin="0.5">2</variable>
@@ -212,7 +212,7 @@
   
   
   
-  <object name="Armchair" class="Armchair" nboxes="4">
+  <object name="Armchair" class="SofaArmchair" nboxes="4">
     <color r="255" g="0" b="0"></color>
 	<variable name="height" coefforigin="0">0.3</variable>
   	<variable name="width" coefforigin="0.5">0.9</variable>
