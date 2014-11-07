@@ -342,6 +342,7 @@ public class J3DHelper {
                 path = "windows/amd64";
             }
         }
+        /*
         if (path == null) {
             System.err.println("Java 3D does not support your architecture (OS: " + os + ", arch: " + arch + ").");
         }
@@ -363,6 +364,7 @@ public class J3DHelper {
                     System.err.println("Unable to change library path.");
                 }
             }
-        }        
+        }  
+        */
     }
 }
