@@ -293,8 +293,13 @@ public class Room {
     
     private boolean isCornerVisible(CornerType ct) {
         int i = ct.ordinal();
-        return ((double)image.getXmin())/image.getWidth() <= corners[i].x && corners[i].x <= ((double)image.getXmax())/image.getWidth() &&
-               ((double)image.getYmin())/image.getHeight() <= corners[i].y && corners[i].y <= ((double)image.getYmax())/image.getHeight();
+        if (corners != null && corners[i] != null) {
+            return ((double)image.getXmin())/image.getWidth() <= corners[i].x && corners[i].x <= ((double)image.getXmax())/image.getWidth() &&
+                   ((double)image.getYmin())/image.getHeight() <= corners[i].y && corners[i].y <= ((double)image.getYmax())/image.getHeight();
+        }
+        else {
+            return false;
+        }
     }
 
     /**************************************************************************/
@@ -325,7 +330,12 @@ public class Room {
         double w = image.getWidth();
         double h = image.getHeight();
         int i = ct.ordinal();
-        return image.imageToDirectCoord(new MyVect(corners[i].x * w, corners[i].y * h, 1));
+        if (corners != null && corners[i] != null) {
+            return image.imageToDirectCoord(new MyVect(corners[i].x * w, corners[i].y * h, 1));
+        }
+        else {
+            return new MyVect(0, 0, 1);
+        }
     }
     
     /**************************************************************************/
